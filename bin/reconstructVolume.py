@@ -22,145 +22,39 @@ import volumetricreconstruction.reconstruction.solver.TikhonovSolver as tk
 import volumetricreconstruction.reconstruction.solver.ADMMSolver as admm
 
 import volumetricreconstructionfromprintedmrfilms.utilities as utils
-
-
-def get_parsed_input_line(
-    verbose,
-    minimizer,
-    prefix_output,
-    regularization,
-    alpha,
-    rho,
-    iter_max,
-    admm_iterations,
-    sigma2,
-    resolution_processing,
-    resolution_reconstruction,
-):
-
-    parser = argparse.ArgumentParser(description="Run motion correction")
-
-    parser.add_argument('--reference',
-                        required=True,
-                        type=str,
-                        help="Path to reference image (*.nii.gz or *.nii)",
-                        )
-    parser.add_argument('--stack',
-                        required=True,
-                        type=str,
-                        help="Path to naively stacked data "
-                        "(*.nii.gz or *.nii)",
-                        )
-    parser.add_argument('--dir-input',
-                        required=True,
-                        type=str,
-                        help="Input directory where final motion correction "
-                        "results are stored (obtained by 'correctMotion.py')",
-                        )
-    parser.add_argument('--dir-output',
-                        required=True,
-                        type=str,
-                        help="Output directory to store volumetric "
-                        "reconstruction results",
-                        )
-    parser.add_argument('--regularization',
-                        type=str,
-                        help="Type of regularization for inverse problem. "
-                        "Possible choices are 'TK0','TK1' or 'TV' for zeroth"
-                        " or first order Tikhonov or isotropic total variation"
-                        " regularization, respectively. I.e. "
-                        "R(x) = ||x||^2 for 'TK0', "
-                        "R(x) = ||Dx||^2 for 'TK1', "
-                        "R(x) = TV(x) for 'TV'."
-                        "[default: %s]"
-                        % (regularization), default=regularization)
-    parser.add_argument('--alpha',
-                        type=float,
-                        help="Regularization parameter alpha to solve the "
-                        "inverse problem for each slice k:  argmin_x"
-                        "[0.5 * ||y_k - A(sigma^2) x_k||^2 + alpha * R(x_k)]. "
-                        "Recommendations for alpha: TK0, TK1: 0.05, TV: 5. "
-                        "[default: %g]" % (alpha), default=alpha)
-    parser.add_argument('--sigma2',
-                        type=float,
-                        help="Covariance for blurring operator A(\sigma^2) "
-                        "[default: %g]" % (sigma2), default=sigma2)
-    parser.add_argument('--rho',
-                        type=float,
-                        help="Regularization parameter rho for augmented "
-                        "Lagrangian term used for ADMM"
-                        "[default: %g]" % (rho), default=rho)
-    parser.add_argument('--minimizer',
-                        type=str,
-                        help="Choice of minimizer used for the inverse problem"
-                        " associated to the volumetric reconstruction step. "
-                        "Possible choices are 'lsmr' or 'L-BFGS-B'. "
-                        "[default: %s]" % (minimizer), default=minimizer)
-    parser.add_argument('--iter-max',
-                        type=int,
-                        help="Number of maximum iterations for the numerical "
-                        "solver. [default: %s]" % (iter_max), default=iter_max)
-    parser.add_argument('--admm-iterations',
-                        type=int,
-                        help="Number of ADMM iterations. [default: %s]"
-                        % (admm_iterations), default=admm_iterations)
-    parser.add_argument('--resolution-processing',
-                        type=float,
-                        help="In-plane resolution used for processing scanned "
-                        "images. [default: %g]"
-                        % (resolution_processing),
-                        default=resolution_processing)
-    parser.add_argument('--resolution-reconstruction',
-                        type=float,
-                        help="In-plane resolution used for reconstructing the"
-                        " final volume."
-                        "[default: %g]"
-                        % (resolution_reconstruction),
-                        default=resolution_reconstruction)
-    parser.add_argument('--prefix-output',
-                        type=str,
-                        help="Prefix for volumetric reconstruction output "
-                        "filename. [default: %s]"
-                        % (prefix_output), default=prefix_output)
-    parser.add_argument('--verbose',
-                        type=int,
-                        help="Turn on/off verbose output. "
-                        "[default %s]" % (verbose),
-                        default=verbose,
-                        )
-
-    args = parser.parse_args()
-
-    ph.print_title("Given Input")
-    print("Chosen Parameters:")
-    for arg in sorted(vars(args)):
-        ph.print_info("%s: " % (arg), newline=False)
-        print(getattr(args, arg))
-
-    return args
+import volumetricreconstructionfromprintedmrfilms.InputArgparser as inargs
 
 if __name__ == '__main__':
 
-    args = get_parsed_input_line(
-        verbose=1,
-        resolution_processing=0.25,
-        resolution_reconstruction=1,
-        minimizer="lsmr",
-        prefix_output="recon_",
-        iter_max=10,
-        sigma2=0.25,
-        # regularization="TK1",
-        # alpha=0.3,    # TK1
-        regularization="TV",
-        alpha=5,    # TV
-        rho=0.5,
-        admm_iterations=10,
-    )
-
     time_start = ph.start_timing()
 
-    # Create output directory
-    # ph.create_directory(args.dir_output)
+    input_parser = inargs.InputArgparser(
+        description="Run volumetric reconstruction given the motion "
+        "correction transforms obtained by 'correctMotion.py'. ",
+        prog="python " + os.path.basename(__file__),
+    )
+    input_parser.add_stack(required=True)
+    input_parser.add_reference(required=True)
+    input_parser.add_dir_input(required=True)
+    input_parser.add_dir_output(
+        required=True,
+        help="Output directory to store volumetric "
+        "reconstruction results")
+    input_parser.add_regularization(default="TV")
+    input_parser.add_alpha(
+        default=5  # TV
+        # default=0.03  # TK1
+    )
+    input_parser.add_rho(default=0.5)
+    input_parser.add_iterations(default=10)
+    input_parser.add_iter_max(default=10)
+    input_parser.add_sigma(default=0.25)
+    input_parser.add_resolution_processing(default=0.25)
+    input_parser.add_resolution_reconstruction(default=1.)
+    input_parser.add_verbose(default=False)
+
+    args = input_parser.parse_args()
+    input_parser.print_arguments(args)
 
     # ---------------------------------------------------------------------
     # Read reference image
@@ -181,8 +75,7 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------
     # Define resampling and reconstruction grids
     ph.print_info("Define resampling and reconstruction grids")
-    slice_thickness = stack0.sitk.GetSpacing()[-1]
-
+    slice_thickness = stack0.sitk.GetSpacing()[2]
     resampling_grid_sitk = 0 * sitkh.get_downsampled_sitk_image(
         stack_corrected.sitk,
         new_spacing=(args.resolution_processing,
@@ -313,7 +206,6 @@ if __name__ == '__main__':
 
     # verbose:
     if args.verbose:
-
         # On reconstruction grid:
         sitkh.show_stacks(
             [stack_naivelyscaled_recon_grid,
@@ -339,7 +231,8 @@ if __name__ == '__main__':
     ph.print_title("Perform SR step")
 
     # Deconvolution only in-plane
-    cov = np.array([args.sigma2, args.sigma2, 1e-5])
+    sigma2 = args.sigma ** 2
+    cov = np.array([sigma2, sigma2, 1e-5])
 
     if args.regularization != "TV":
         volumetric_recon = tk.TikhonovSolver(
@@ -347,7 +240,6 @@ if __name__ == '__main__':
             reconstruction=recon_grid,
             alpha=args.alpha,
             iter_max=args.iter_max,
-            minimizer=args.minimizer,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
         )
@@ -359,7 +251,6 @@ if __name__ == '__main__':
             reconstruction=recon_grid,
             alpha=0.02,
             iter_max=5,
-            minimizer="lsmr",
             x_scale=1,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
@@ -372,12 +263,11 @@ if __name__ == '__main__':
             reconstruction=HR_volume0,
             alpha=args.alpha,
             iter_max=args.iter_max,
-            minimizer=args.minimizer,
             x_scale=1,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
             rho=args.rho,
-            iterations=args.admm_iterations,
+            iterations=args.iterations,
         )
 
     volumetric_recon.run_reconstruction()
@@ -385,7 +275,7 @@ if __name__ == '__main__':
 
     stack_reconstructed = volumetric_recon.get_reconstruction()
     stack_reconstructed.set_filename(
-        volumetric_recon.get_setting_specific_filename(prefix=args.prefix_output))
+        volumetric_recon.get_setting_specific_filename(prefix="recon_"))
 
     if args.verbose:
         sitkh.show_stacks(

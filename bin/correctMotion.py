@@ -22,88 +22,50 @@ import volumetricreconstruction.registration.NiftyReg as regniftyreg
 import volumetricreconstruction.registration.IntraStackRegistration as intrareg
 
 import volumetricreconstructionfromprintedmrfilms.utilities as utils
+import volumetricreconstructionfromprintedmrfilms.InputArgparser as inargs
 
-
-def get_parsed_input_line(
-    increase_inplane_spacing,
-    downsampling_factor,
-    verbose,
-    iter_max,
-):
-
-    parser = argparse.ArgumentParser(description="Run motion correction")
-
-    parser.add_argument('--reference',
-                        required=True,
-                        type=str,
-                        help="Path to reference image (*.nii.gz or *.nii)",
-                        )
-    parser.add_argument('--stack',
-                        required=True,
-                        type=str,
-                        help="Path to naively stacked data "
-                        "(*.nii.gz or *.nii)",
-                        )
-    parser.add_argument('--dir-output-verbose',
-                        required=True,
-                        type=str,
-                        help="Output directory to store all intermediate results",
-                        )
-    parser.add_argument('--dir-output',
-                        required=True,
-                        type=str,
-                        help="Output directory to store final results on motion correction",
-                        )
-    parser.add_argument('--iter-max',
-                        type=int,
-                        help="Number of maximum iterations for numerical "
-                        "minimizer. "
-                        "[default: %s]" % (iter_max), default=iter_max)
-    parser.add_argument('--increase-inplane-spacing',
-                        type=float,
-                        help=" [default %s]" % (increase_inplane_spacing),
-                        default=increase_inplane_spacing,
-                        )
-    parser.add_argument('--downsampling-factor',
-                        type=int,
-                        help=" [default %s]" % (downsampling_factor),
-                        default=downsampling_factor,
-                        )
-    parser.add_argument('--verbose',
-                        type=int,
-                        help="Turn on/off verbose output. "
-                        "[default %s]" % (verbose),
-                        default=verbose,
-                        )
-
-    args = parser.parse_args()
-
-    ph.print_title("Given Input")
-    print("Chosen Parameters:")
-    for arg in sorted(vars(args)):
-        ph.print_info("%s: " % (arg), newline=False)
-        print(getattr(args, arg))
-
-    return args
 
 if __name__ == '__main__':
-    # Counter to write the output images in a consecutive sequence
-    ctr = [0]
 
     time_start = ph.start_timing()
-    args = get_parsed_input_line(
-        increase_inplane_spacing=1,
-        downsampling_factor=10,
-        verbose=0,
-        iter_max=20,
+
+    input_parser = inargs.InputArgparser(
+        description="Run motion correction pipeline to estimate meta-data "
+        "information and physical position of each slice in the 3D space. "
+        "Estimated transform parameters for both in-plane similarity and "
+        "affine transforms are written to the output directory for each "
+        "single slice. "
+        "The obtained motion correction results are used as input for "
+        "'reconstructVolume.py' which provides a volumetric "
+        "reconstructions in a subsequent step. "
+
+        "Intermediate results can be stored by using the optional "
+        "(but recommended) argument 'dir-output-verbose'. ",
+        prog="python " + os.path.basename(__file__),
     )
+    input_parser.add_stack(required=True)
+    input_parser.add_reference(required=True)
+    input_parser.add_dir_output(
+        required=True,
+        help="Output directory to store motion correction results for both "
+        "similarity and affine in-plane transformations.",)
+    input_parser.add_iter_max(default=20)
+    input_parser.add_verbose(default=0)
+    input_parser.add_dir_output_verbose(required=False)
+    input_parser.add_factor_downsampling(default=10)
+    input_parser.add_factor_inplane_spacing(default=1)
+
+    args = input_parser.parse_args()
+    input_parser.print_arguments(args)
+
+    if args.dir_output_verbose is None and args.verbose is True:
+        raise IOError(
+            "Provide --dir-output-verbose option in case you want to "
+            "run verbose")
 
     # Extract filenames from given path without filename extension
     filename_reference = os.path.basename(args.reference).split(".")[0]
     filename_stack = os.path.basename(args.stack).split(".")[0]
-
-    increase_inplane_spacing = args.increase_inplane_spacing
-    downsampling_factor = args.downsampling_factor
 
     # ---------------------------------------------------------------------
     # Read reference image
@@ -122,7 +84,7 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------
     # Scale original stack with initial in-plane scale estimate
     spacing = np.array(stack_sitk.GetSpacing())
-    spacing[0:-1] *= increase_inplane_spacing
+    spacing[0:-1] *= args.factor_inplane_spacing
     stack_sitk.SetSpacing(spacing)
     stack = st.Stack.from_sitk_image(stack_sitk, filename_stack)
 
@@ -131,7 +93,7 @@ if __name__ == '__main__':
 
     # Create scaling matrix + get info from image
     scaling_matrix = np.diag(
-        [increase_inplane_spacing, increase_inplane_spacing, 1])
+        [args.factor_inplane_spacing, args.factor_inplane_spacing, 1])
     direction_matrix = np.array(stack_sitk.GetDirection()).reshape(3, 3)
     origin = np.array(stack_sitk.GetOrigin())
 
@@ -163,17 +125,17 @@ if __name__ == '__main__':
     ph.print_title("Downsample stack image")
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
-    downsampling_factor = int(downsampling_factor /
-                              float(increase_inplane_spacing))
+    args.factor_downsampling = int(args.factor_downsampling /
+                              float(args.factor_inplane_spacing))
     stack_sitk_downsampled = sitkh.get_downsampled_sitk_image(
         stack_sitk,
-        downsampling_factors=(downsampling_factor, downsampling_factor, 1),
+        downsampling_factors=(args.factor_downsampling, args.factor_downsampling, 1),
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
     ph.print_info("Default pixel value for resampling: %.2f"
                   % (default_pixel_value))
     ph.print_info("Downsampling factor (corrected by in-plane spacing): %d"
-                  % (downsampling_factor))
+                  % (args.factor_downsampling))
 
     # ---------------------------------------------------------------------
     # Skull mask stripping
@@ -192,12 +154,17 @@ if __name__ == '__main__':
     # stack_downsampled.show(1)
 
     # Write result
-    filename_suffix = "_downsampled" + str(downsampling_factor)
-    stack_downsampled.set_filename(filename_stack + filename_suffix)
-    stack_downsampled.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=True)
+    if args.dir_output_verbose is not None:
+        # Counter to write the output images in a consecutive sequence
+        ctr = [-1]
+
+        filename_suffix = "_downsampled" + str(args.factor_downsampling)
+        stack_downsampled.set_filename(filename_stack + filename_suffix)
+        stack_downsampled.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=True)
 
     # ---------------------------------------------------------------------
     # Self in-plane rigid registration
@@ -215,7 +182,8 @@ if __name__ == '__main__':
     stack_selfRigidInplane = inplane_registration.get_corrected_stack()
 
     # Get slice transforms
-    slice_transforms_sitk_update = inplane_registration.get_slice_transforms_sitk()
+    slice_transforms_sitk_update = \
+        inplane_registration.get_slice_transforms_sitk()
     slice_transforms_sitk = utils.get_updated_affine_transforms(
         slice_transforms_sitk_update, slice_transforms_sitk)
 
@@ -232,14 +200,16 @@ if __name__ == '__main__':
     #      ])
 
     # Write result
-    filename_suffix = "_selfinplane"
-    stack_selfRigidInplane.set_filename(filename_stack + filename_suffix)
-    tmp = stack_selfRigidInplane.get_resampled_stack_from_slices(
-        interpolator="BSpline", default_pixel_value=default_pixel_value)
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False)
+    if args.dir_output_verbose is not None:
+        filename_suffix = "_selfinplane"
+        stack_selfRigidInplane.set_filename(filename_stack + filename_suffix)
+        tmp = stack_selfRigidInplane.get_resampled_stack_from_slices(
+            interpolator="BSpline", default_pixel_value=default_pixel_value)
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False)
 
     if args.verbose:
         sitkh.show_stacks(
@@ -299,21 +269,24 @@ if __name__ == '__main__':
     stack_rigidToReference = registration_method.get_transformed_fixed()
 
     # Get slice transforms
-    slice_transforms_sitk_update = registration_method.get_registration_transform_sitk()
+    slice_transforms_sitk_update = \
+        registration_method.get_registration_transform_sitk()
     slice_transforms_sitk = utils.get_updated_affine_transforms(
         slice_transforms_sitk_update, slice_transforms_sitk)
 
     # Write result
-    filename_suffix = "_RigidToReference"
-    stack_rigidToReference.set_filename(filename_stack + filename_suffix)
-    tmp = stack_rigidToReference.get_resampled_stack_from_slices(
-        interpolator="BSpline")
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False,
-        # write_mask=True,
-    )
+    if args.dir_output_verbose is not None:
+        filename_suffix = "_RigidToReference"
+        stack_rigidToReference.set_filename(filename_stack + filename_suffix)
+        tmp = stack_rigidToReference.get_resampled_stack_from_slices(
+            interpolator="BSpline")
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False,
+            # write_mask=True,
+        )
 
     # Debug
     if args.verbose:
@@ -360,20 +333,17 @@ if __name__ == '__main__':
     slice_transforms_sitk = utils.get_updated_affine_transforms(
         slice_transforms_sitk_update, slice_transforms_sitk)
 
-    # foo = st.Stack.from_stack(stack_downsampled)
-    # foo.update_motion_correction_of_slices(slice_transforms_sitk)
-    # foo.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk).show()
-    # stack_inplane3DSimilar.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk).show()
-
     # Write result
-    filename_suffix = "_inplane3Dsimilar"
-    stack_inplane3DSimilar.set_filename(filename_stack + filename_suffix)
-    tmp = stack_inplane3DSimilar.get_resampled_stack_from_slices(
-        interpolator="BSpline")
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False)
+    if args.dir_output_verbose is not None:
+        filename_suffix = "_inplane3Dsimilar"
+        stack_inplane3DSimilar.set_filename(filename_stack + filename_suffix)
+        tmp = stack_inplane3DSimilar.get_resampled_stack_from_slices(
+            interpolator="BSpline")
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False)
 
     # Debug
     if args.verbose:
@@ -390,8 +360,9 @@ if __name__ == '__main__':
     ph.print_title("Resampling of reference to stack grid")
     reference_image_downsampled = reference_image.get_resampled_stack(
         resampling_grid=stack_inplane3DSimilar.sitk, interpolator="BSpline")
-    reference_image_downsampled.write(
-        directory=args.dir_output_verbose, write_mask=True)
+    if args.dir_output_verbose is not None:
+        reference_image_downsampled.write(
+            directory=args.dir_output_verbose, write_mask=True)
 
     # ---------------------------------------------------------------------
     # Skull mask stripping
@@ -419,17 +390,20 @@ if __name__ == '__main__':
     intensity_correction.run_lower_percentile_capping_of_stack(percentile=20)
     intensity_correction.use_individual_slice_correction(False)
     intensity_correction.run_linear_intensity_correction()
-    stack_intensityCorrected = intensity_correction.get_intensity_corrected_stack()
+    stack_intensityCorrected = \
+        intensity_correction.get_intensity_corrected_stack()
 
     # Write result
-    filename_suffix = "_intensityCorrected"
-    stack_intensityCorrected.set_filename(filename_stack + filename_suffix)
-    tmp = stack_intensityCorrected.get_resampled_stack_from_slices(
-        interpolator="BSpline")
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False)
+    if args.dir_output_verbose is not None:
+        filename_suffix = "_intensityCorrected"
+        stack_intensityCorrected.set_filename(filename_stack + filename_suffix)
+        tmp = stack_intensityCorrected.get_resampled_stack_from_slices(
+            interpolator="BSpline")
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False)
 
     if args.verbose:
         sitkh.show_stacks(
@@ -440,8 +414,8 @@ if __name__ == '__main__':
             segmentation=reference_image_downsampled)
 
     # ---------------------------------------------------------------------
-    # Inplane 2D similarity/rigid registration to reference
-    ph.print_title("Inplane 2D similarity/rigid registration to reference")
+    # Inplane 2D similarity registration to reference
+    ph.print_title("Inplane 2D similarity registration to reference")
     inplane_registration = intrareg.IntraStackRegistration(
         stack=stack_intensityCorrected,
         reference=reference_image_downsampled)
@@ -469,7 +443,8 @@ if __name__ == '__main__':
     inplane_registration.run_registration()
     inplane_registration.print_statistics()
     final_cost = inplane_registration.get_final_cost()
-    slice_transforms_sitk_update = inplane_registration.get_slice_transforms_sitk()
+    slice_transforms_sitk_update = \
+        inplane_registration.get_slice_transforms_sitk()
     stack_inplane2Dsimilar = inplane_registration.get_corrected_stack()
     filename_suffix = inplane_registration.get_setting_specific_filename()
     stack_inplane2Dsimilar.set_filename(filename_stack + filename_suffix)
@@ -521,12 +496,14 @@ if __name__ == '__main__':
         slice_transforms_sitk_update, slice_transforms_sitk)
 
     # Write result
-    tmp = stack_inplane2Dsimilar.get_resampled_stack_from_slices(
-        interpolator="BSpline")
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False)
+    if args.dir_output_verbose is not None:
+        tmp = stack_inplane2Dsimilar.get_resampled_stack_from_slices(
+            interpolator="BSpline")
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False)
 
     # foo = st.Stack.from_stack(stack_downsampled)
     # foo.update_motion_correction_of_slices(slice_transforms_sitk)
@@ -591,17 +568,20 @@ if __name__ == '__main__':
         )
 
     # Get slice transforms
-    slice_transforms_sitk_update = inplane_registration.get_slice_transforms_sitk()
+    slice_transforms_sitk_update = \
+        inplane_registration.get_slice_transforms_sitk()
     slice_transforms_sitk = utils.get_updated_affine_transforms(
         slice_transforms_sitk_update, slice_transforms_sitk)
 
     # Write result
-    tmp = stack_inplane2Daffine.get_resampled_stack_from_slices(
-        interpolator="BSpline")
-    tmp.write(
-        directory=args.dir_output_verbose,
-        filename=filename_stack + "_" + str(ph.add_one(ctr)) + filename_suffix,
-        write_mask=False)
+    if args.dir_output_verbose is not None:
+        tmp = stack_inplane2Daffine.get_resampled_stack_from_slices(
+            interpolator="BSpline")
+        tmp.write(
+            directory=args.dir_output_verbose,
+            filename=filename_stack + "_" +
+            str(ph.add_one(ctr)) + filename_suffix,
+            write_mask=False)
 
     # foo = st.Stack.from_stack(stack_downsampled)
     # foo.update_motion_correction_of_slices(slice_transforms_sitk)
