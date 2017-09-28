@@ -28,7 +28,9 @@ All dependencies can be installed using `pip` by running
 * `pip install -r requirements.txt`
 * `pip install -e .`
 
-Note, that we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
+Note, that
+* the current version relies on the deconvolution operator as implemented in the [VolumetricReconstruction](https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction) toolkit. It therefore relies on the ITK version as described there which needs to be installed separately.
+* we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
 
 ## Example usage
