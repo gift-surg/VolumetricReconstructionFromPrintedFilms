@@ -29,8 +29,10 @@ if __name__ == '__main__':
     time_start = ph.start_timing()
 
     input_parser = inargs.InputArgparser(
-        description="Run volumetric reconstruction given the motion "
-        "correction transforms obtained by 'correctMotion.py'. ",
+        description="Based on the estimated transformations obtained by "
+        "'correctMotion.py' a volumetric representation is reconstructed. "
+        "An additional total variation denoising step is performed for "
+        "improved visual appearance",
         prog="python " + os.path.basename(__file__),
     )
     input_parser.add_stack(required=True)
@@ -42,7 +44,7 @@ if __name__ == '__main__':
         "reconstruction results")
     input_parser.add_regularization(default="TV")
     input_parser.add_alpha(
-        default=5  # TV
+        default=0.003  # TV
         # default=0.03  # TK1
     )
     input_parser.add_rho(default=0.5)
@@ -251,7 +253,6 @@ if __name__ == '__main__':
             reconstruction=recon_grid,
             alpha=0.02,
             iter_max=5,
-            x_scale=1,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
         )
@@ -263,7 +264,6 @@ if __name__ == '__main__':
             reconstruction=HR_volume0,
             alpha=args.alpha,
             iter_max=args.iter_max,
-            x_scale=1,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
             rho=args.rho,
@@ -271,7 +271,6 @@ if __name__ == '__main__':
         )
 
     volumetric_recon.run_reconstruction()
-    volumetric_recon.compute_statistics()
 
     stack_reconstructed = volumetric_recon.get_reconstruction()
     stack_reconstructed.set_filename(

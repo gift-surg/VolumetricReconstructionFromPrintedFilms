@@ -1,0 +1,8 @@
+matplotlib==1.4.3
+natsort==5.0.3
+numpy==1.13.1
+SimpleITK==1.0.1
+-e git+https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper.git#egg=PythonHelper
+-e git+https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver.git#egg=NumericalSolver
+-e git+https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools.git#egg=RegistrationTools
+-e git+https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction.git#egg=VolumetricReconstruction
