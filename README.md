@@ -53,7 +53,7 @@ Recover the meta-data information and correct for in-plane motion of each indivi
 * `python bin/correctMotion.py \
 --stack path-to-extracted-stack.nii.gz \
 --reference path-to-reference-volume.nii.gz \
---dir-output output-directory-for-motion-correction \
+--dir-output output-directory-for-motion-correction-results \
 --dir-output-verbose output-directory-for-intermediate-results
 `
 
