@@ -2,19 +2,18 @@
 
 This is a research-focused toolkit developed within the [GIFT-Surg](http://www.gift-surg.ac.uk/) project to reconstruct a volumetric representation from printed brain MR films as described in [[Ebner2017]](https://www.journals.elsevier.com/neuroimage).
 
+If you have any questions or comments (or find bugs), please drop me an email to `michael.ebner.14@ucl.ac.uk`.
+
 ## How it works
 
-1. Semi-Automatic Slice Extraction Tool:
+1. **Run the Semi-Automatic Slice Extraction Tool:**
+A semi-automatic slice extraction tool is used to create a digital image stack from printed slices selected from the scanned brain MR films. It provides an initial digital 3D representation of acquired slices printed on a 2D  lm where the correct spatial position and dimension of each single slice needs to be recovered.
 
-. A semi-automatic slice extraction tool is used to create a digital image stack from printed slices selected from the scanned brain MR films. It provides an initial digital 3D representation of acquired slices printed on a 2D  lm where the correct spatial position and dimension of each single slice needs to be recovered.
+1. **Recover Meta-Data Information and Correct for In-plane Motion:**
+A fully automatic volumetric reconstruction framework to estimate the lost meta-data information of each slice in the 3D space. It is based on a joint slice-to-volume a ne registration with inter-slice 2D transformation regularisation and a ne slice-intensity correction. Missing meta-data information is contributed by a longitudinal scan of the same subject.
 
-1. Recover Meta-Data Information and Correct for In-plane Motion:
-
-. A fully automatic volumetric reconstruction framework to estimate the lost meta-data information of each slice in the 3D space. It is based on a joint slice-to-volume a ne registration with inter-slice 2D transformation regularisation and a ne slice-intensity correction. Missing meta-data information is contributed by a longitudinal scan of the same subject.
-
-1. Isotropic Total Variation Denoising:
-
-. A final isotropic total variation in-plane deconvolution technique serves to revitalise the visual appearance of the reconstructed stack of printed slices.
+1. **Recover the 3D Volume using Isotropic Total Variation Denoising:**
+A final isotropic total variation in-plane deconvolution technique serves to revitalise the visual appearance of the reconstructed stack of printed slices.
 
 
 ## Installation
