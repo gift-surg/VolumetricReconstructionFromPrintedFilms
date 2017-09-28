@@ -24,7 +24,11 @@ This toolkit depends on a variety of software packages developed within the [GIF
 * [RegistrationTools](https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools)
 * [PythonHelper](https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper)
 
-All dependencies can be installed using `pip` by running
+After cloning this repository via
+
+* `git clone git@cmiclab.cs.ucl.ac.uk:mebner/VolumetricReconstructionFromPrintedMrFilms.git`
+
+all dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
 * `pip install -e .`
 
