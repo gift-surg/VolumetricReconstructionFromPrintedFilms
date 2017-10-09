@@ -16,16 +16,16 @@ from setuptools import setup
 
 long_description = ""
 
-setup(name='VolumetricReconstructionFromPrintedMrFilms',
+setup(name='VolumetricReconstructionFromPrintedFilms',
       version='0.1.dev1',
       description='Volumetric Reconstruction from Printed Films: '
       'Enabling 30 Year Longitudinal Analysis in MR Neuroimaging',
       long_description=long_description,
-      url='https://github.com/gift-surg/VolumetricReconstructionFromPrintedMrFilms',
+      url='https://github.com/gift-surg/VolumetricReconstructionFromPrintedFilms',
       author='Michael Ebner',
       author_email='michael.ebner.14@ucl.ac.uk',
       license='MIT',
-      packages=['volumetricreconstructionfromprintedmrfilms'],
+      packages=['volumetricreconstructionfromprintedfilms'],
       install_requires=[
           'pythonhelper',
           'numericalsolver',

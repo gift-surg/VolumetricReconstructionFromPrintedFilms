@@ -21,8 +21,8 @@ import volumetricreconstruction.preprocessing.IntensityCorrection as ic
 import volumetricreconstruction.reconstruction.solver.TikhonovSolver as tk
 import volumetricreconstruction.reconstruction.solver.ADMMSolver as admm
 
-import volumetricreconstructionfromprintedmrfilms.utilities as utils
-import volumetricreconstructionfromprintedmrfilms.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities as utils
+import volumetricreconstructionfromprintedfilms.InputArgparser as inargs
 
 if __name__ == '__main__':
 

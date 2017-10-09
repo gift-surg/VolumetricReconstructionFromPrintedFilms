@@ -21,8 +21,8 @@ import volumetricreconstruction.registration.RegistrationCppITK as regitk
 import volumetricreconstruction.registration.NiftyReg as regniftyreg
 import volumetricreconstruction.registration.IntraStackRegistration as intrareg
 
-import volumetricreconstructionfromprintedmrfilms.utilities as utils
-import volumetricreconstructionfromprintedmrfilms.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities as utils
+import volumetricreconstructionfromprintedfilms.InputArgparser as inargs
 
 
 if __name__ == '__main__':
