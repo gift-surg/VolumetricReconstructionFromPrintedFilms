@@ -1,8 +1,10 @@
-# Volumetric Reconstruction from Printed MR Films 
+# Volumetric Reconstruction from Printed Films
 
-This is a research-focused toolkit developed within the [GIFT-Surg](http://www.gift-surg.ac.uk/) project to reconstruct a volumetric representation from printed brain MR films as described in [[Ebner2017]](https://www.journals.elsevier.com/neuroimage).
+This is a research-focused toolkit developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
 
-If you have any questions or comments (or find bugs), please drop me an email to `michael.ebner.14@ucl.ac.uk`.
+The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
+
+If you have any questions or comments (or find bugs), please drop an email to `michael.ebner.14@ucl.ac.uk`.
 
 ## How it works
 
@@ -15,10 +17,14 @@ A fully automatic volumetric reconstruction framework to estimate the lost meta-
 1. **Recover the 3D Volume using Isotropic Total Variation Denoising:**
 A final isotropic total variation in-plane deconvolution technique serves to revitalise the visual appearance of the reconstructed stack of printed slices.
 
+## How to cite
+If you use this software in your work, please cite [Ebner et al., 2017][citation].
+
+* Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., and Ourselin, S. (In press). Volumetric Reconstruction from Printed Films: Enabling 30 Year Longitudinal Analysis in MR Neuroimaging. NeuroImage.
 
 ## Installation
 
-This toolkit depends on a variety of software packages developed within the [GIFT-Surg](http://www.gift-surg.ac.uk/) including
+This toolkit depends on a variety of software packages developed within the [GIFT-Surg][giftsurg] including
 * [VolumetricReconstruction](https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction)
 * [NumericalSolver](https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver)
 * [RegistrationTools](https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools)
@@ -79,9 +85,26 @@ An example call reads:
 --alpha 0.005
 `
 
-# References
+# License
+Copyright (c) 2015-2017, [University College London][ucl].
 
-[[Ebner2017]](https://www.journals.elsevier.com/neuroimage) Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., and Ourselin, S. (In press). Volumetric Reconstruction from Printed Films: Enabling 30 Year Longitudinal Analysis in MR Neuroimaging. NeuroImage.
+This framework available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
-## License
-This framework is licensed under the [MIT license ![MIT](https://raw.githubusercontent.com/legacy-icons/license-icons/master/dist/32x32/mit.png)](http://opensource.org/licenses/MIT)
+
+# Funding
+This work is partially funded by the UCL [Engineering and Physical Sciences Research Council (EPSRC)][epsrc] Centre for Doctoral Training in Medical Imaging (EP/L016478/1), the Innovative Engineering for Health award ([Wellcome Trust][wellcometrust] [WT101957] and [EPSRC][epsrc] [NS/A000027/1]), the [Multiple Sclerosis Society of Great Britain and Northern Ireland][mssociety] (grant references 20 and 984) and supported by the [National Institute for Health Research][nihr] [University College London Hospitals (UCLH)][uclh] Biomedical Research Centre. FP is supported by the [Guarantors of Brain][guarantors].
+
+
+[citation]: http://www.sciencedirect.com/science/article/pii/S1053811917308042
+[mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
+[tig]: http://cmictig.cs.ucl.ac.uk
+[bsd]: https://opensource.org/licenses/BSD-3-Clause
+[giftsurg]: http://www.gift-surg.ac.uk
+[cmic]: http://cmic.cs.ucl.ac.uk
+[guarantors]: https://guarantorsofbrain.org/
+[ucl]: http://www.ucl.ac.uk
+[uclh]: http://www.uclh.nhs.uk
+[epsrc]: http://www.epsrc.ac.uk
+[wellcometrust]: http://www.wellcome.ac.uk
+[mssociety]: https://www.mssociety.org.uk/
+[nihr]: http://www.nihr.ac.uk/research
