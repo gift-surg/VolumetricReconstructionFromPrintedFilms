@@ -24,41 +24,35 @@ setup(name='VolumetricReconstructionFromPrintedFilms',
       url='https://github.com/gift-surg/VolumetricReconstructionFromPrintedFilms',
       author='Michael Ebner',
       author_email='michael.ebner.14@ucl.ac.uk',
-      license='MIT',
+      license='BSD-3',
       packages=['volumetricreconstructionfromprintedfilms'],
       install_requires=[
           'pythonhelper',
           'numericalsolver',
           'registrationtools',
-          # 'volumetricreconstruction',
+          'volumetricreconstruction',
       ],
       zip_safe=False,
       keywords="mrireconstruction historicalmrfilmdata brainmri "
       "regularizedimageregistration totalvariationreconstruction "
       "longitudinal analysis",
       classifiers=[
-          # How mature is this project? Common values are
-          #   3 - Alpha
-          #   4 - Beta
-          #   5 - Production/Stable
           'Development Status :: 3 - Alpha',
 
-          # Indicate who your project is intended for
           'Intended Audience :: Developers',
           'Topic :: Software Development :: Build Tools',
 
-          # Pick your license as you wish (should match "license" above)
-          'License :: OSI Approved :: MIT License',
+          'License :: OSI Approved :: BSD-3 License',
 
-          # Specify the Python versions you support here. In particular, ensure
-          # that you indicate whether you support Python 2, Python 3 or both.
-          # 'Programming Language :: Python :: 2',
-          # 'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
-          # 'Programming Language :: Python :: 3',
-          # 'Programming Language :: Python :: 3.2',
-          # 'Programming Language :: Python :: 3.3',
-          # 'Programming Language :: Python :: 3.4',
       ],
-
+      entry_points={
+          'console_scripts': [
+              'vrpf_extract_stack_from_films = volumetricreconstructionfromprintedfilms.application.extractStackFromFilms:main',
+              'vrpf_correct_motion = volumetricreconstructionfromprintedfilms.application.correctMotion:main',
+              'vrpf_reconstruct_volume = volumetricreconstructionfromprintedfilms.application.reconstructVolume:main',
+          ],
+      },
       )

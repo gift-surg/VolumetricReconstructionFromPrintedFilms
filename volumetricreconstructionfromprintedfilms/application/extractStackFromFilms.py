@@ -21,12 +21,12 @@ import volumetricreconstruction.registration.RegistrationCppITK as regitk
 import volumetricreconstruction.registration.NiftyReg as regniftyreg
 import volumetricreconstruction.registration.IntraStackRegistration as intrareg
 
-import volumetricreconstructionfromprintedfilms.InputArgparser as inargs
-import volumetricreconstructionfromprintedfilms.utilities as utils
-import volumetricreconstructionfromprintedfilms.ScanExtractor as se
+import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
+import volumetricreconstructionfromprintedfilms.utilities.ScanExtractor as se
 
 
-if __name__ == '__main__':
+def main():
 
     time_start = ph.start_timing()
 
@@ -38,7 +38,6 @@ if __name__ == '__main__':
         "position and dimension of each single slice needs to be recovered "
         "in subsequent steps by using "
         "'correctMotion.py' and 'reconstructVolume.py', respectively.",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_films(required=True)
     input_parser.add_stack(required=True)
@@ -71,7 +70,8 @@ if __name__ == '__main__':
                         args.inplane_spacing,
                         args.slice_thickness])
     image_sitk.SetSpacing(spacing)
-    ph.print_info("Stack spacing updated")
+    ph.print_info("Stack spacing updated (%gmm, %gmm, %gmm)" % (
+        spacing[0], spacing[1], spacing[2]))
 
     sitk.WriteImage(image_sitk, args.stack)
     ph.print_info("Extracted image stack written to '%s'" % (args.stack))
@@ -79,3 +79,8 @@ if __name__ == '__main__':
     elapsed_time = ph.stop_timing(time_start)
     ph.print_title("Summary Semi-automatic Slice Extraction")
     ph.print_info("Elapsed time: %s" % elapsed_time)
+
+    return 0
+
+if __name__ == '__main__':
+    main()

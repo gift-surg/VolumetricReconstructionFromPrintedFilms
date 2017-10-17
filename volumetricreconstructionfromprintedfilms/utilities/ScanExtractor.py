@@ -15,7 +15,7 @@ import sys
 import matplotlib.pyplot as plt
 
 import pythonhelper.PythonHelper as ph
-import volumetricreconstructionfromprintedfilms.FigureEventHandling as feh
+import volumetricreconstructionfromprintedfilms.utilities.FigureEventHandling as feh
 
 ##
 #       Extract scans semi-automatically from MR films

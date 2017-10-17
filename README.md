@@ -25,21 +25,21 @@ If you use this software in your work, please cite [Ebner et al., 2017][citation
 ## Installation
 
 This toolkit depends on a variety of software packages developed within the [GIFT-Surg][giftsurg] including
-* [VolumetricReconstruction](https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction)
-* [NumericalSolver](https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver)
-* [RegistrationTools](https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools)
-* [PythonHelper](https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper)
+* [NiftyMIC][volumetricreconstruction]
+* [NSoL][numericalsolver]
+* [SimpleReg][registrationtools]
+* [PySiTK][pythonhelper]
 
 After cloning this repository via
 
-* `git clone git@cmiclab.cs.ucl.ac.uk:mebner/VolumetricReconstructionFromPrintedMrFilms.git`
+* `git clone git@github.com:gift-surg/VolumetricReconstructionFromPrintedFilms.git`
 
 all dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
 * `pip install -e .`
 
 Note, that
-* the current version relies on the deconvolution operator as implemented in the [VolumetricReconstruction](https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction) toolkit. It therefore relies on the ITK version as described there which needs to be installed separately.
+* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][volumetricreconstruction] toolkit. It therefore relies on the ITK version as described there which needs to be installed separately.
 * we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
 
@@ -47,7 +47,7 @@ Note, that
 
 Run the semi-automatic slice extraction tool to create a a digital image stack from printed slices:
 
-* `python bin/extractStackFromFilms \
+* `python vrpf_extract_stack_from_films \
 --films path-to-film1.dcm ... path-to-filmN.dcm \
 --stack path-to-extracted-stack.nii.gz \
 --inplane-spacing initial-guess-in-plane-spacing \
@@ -60,7 +60,7 @@ A handbook on how to use the semi-automatic slice extraction tool can be found i
 
 Recover the meta-data information and correct for in-plane motion of each individual slice by using a reference volume.
 
-* `python bin/correctMotion.py \
+* `python vrpf_correct_motion.py \
 --stack path-to-extracted-stack.nii.gz \
 --reference path-to-reference-volume.nii.gz \
 --dir-output output-directory-for-motion-correction-results \
@@ -76,7 +76,7 @@ reconstructions in a subsequent step.
 Based on the estimated transformations a volumetric representation is reconstructed. An additional total variation denoising step is performed for improved visual appearance.
 
 An example call reads:
-* `python bin/reconstructVolume.py \
+* `python vrpf_reconstruct_volume.py \
 --stack path-to-extracted-stack.nii.gz \
 --reference path-to-reference-volume.nii.gz \
 --dir-input path-to-motion-correction-results/Similarity \
@@ -85,9 +85,8 @@ An example call reads:
 --alpha 0.005
 `
 
-# License
-Copyright (c) 2015-2017, [University College London][ucl].
-
+# Licensing and Copyright
+Copyright (c) 2017, [University College London][ucl].
 This framework available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 
@@ -108,3 +107,7 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 [wellcometrust]: http://www.wellcome.ac.uk
 [mssociety]: https://www.mssociety.org.uk/
 [nihr]: http://www.nihr.ac.uk/research
+[volumetricreconstruction]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction
+[numericalsolver]: https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver
+[registrationtools]: https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools
+[pythonhelper]: https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper

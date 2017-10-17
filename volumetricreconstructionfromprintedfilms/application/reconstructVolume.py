@@ -21,10 +21,11 @@ import volumetricreconstruction.preprocessing.IntensityCorrection as ic
 import volumetricreconstruction.reconstruction.solver.TikhonovSolver as tk
 import volumetricreconstruction.reconstruction.solver.ADMMSolver as admm
 
-import volumetricreconstructionfromprintedfilms.utilities as utils
-import volumetricreconstructionfromprintedfilms.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
+import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
 
-if __name__ == '__main__':
+
+def main():
 
     time_start = ph.start_timing()
 
@@ -33,7 +34,6 @@ if __name__ == '__main__':
         "'correctMotion.py' a volumetric representation is reconstructed. "
         "An additional total variation denoising step is performed for "
         "improved visual appearance",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_stack(required=True)
     input_parser.add_reference(required=True)
@@ -300,3 +300,8 @@ if __name__ == '__main__':
 
     ph.print_title("Summary Motion Correction")
     ph.print_info("Computational time: %s" % elapsed_time)
+
+    return 0
+
+if __name__ == '__main__':
+    main()

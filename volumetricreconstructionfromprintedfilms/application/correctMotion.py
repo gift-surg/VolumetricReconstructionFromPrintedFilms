@@ -21,11 +21,11 @@ import volumetricreconstruction.registration.RegistrationCppITK as regitk
 import volumetricreconstruction.registration.NiftyReg as regniftyreg
 import volumetricreconstruction.registration.IntraStackRegistration as intrareg
 
-import volumetricreconstructionfromprintedfilms.utilities as utils
-import volumetricreconstructionfromprintedfilms.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
+import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
 
 
-if __name__ == '__main__':
+def main():
 
     time_start = ph.start_timing()
 
@@ -41,7 +41,6 @@ if __name__ == '__main__':
 
         "Intermediate results can be stored by using the optional "
         "(but recommended) argument 'dir-output-verbose'. ",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_stack(required=True)
     input_parser.add_reference(required=True)
@@ -126,10 +125,11 @@ if __name__ == '__main__':
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
     args.factor_downsampling = int(args.factor_downsampling /
-                              float(args.factor_inplane_spacing))
+                                   float(args.factor_inplane_spacing))
     stack_sitk_downsampled = sitkh.get_downsampled_sitk_image(
         stack_sitk,
-        downsampling_factors=(args.factor_downsampling, args.factor_downsampling, 1),
+        downsampling_factors=(args.factor_downsampling,
+                              args.factor_downsampling, 1),
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
     ph.print_info("Default pixel value for resampling: %.2f"
@@ -629,3 +629,8 @@ if __name__ == '__main__':
     elapsed_time = ph.stop_timing(time_start)
     ph.print_title("Summary Motion Correction")
     ph.print_info("Computational time: %s" % elapsed_time)
+
+    return 0
+
+if __name__ == '__main__':
+    main()
