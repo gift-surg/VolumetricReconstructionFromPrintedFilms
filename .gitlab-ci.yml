@@ -1,0 +1,8 @@
+builddocs:
+  only:
+    - master
+  script:
+    - cd doc
+    - doxygen doxyfile
+  tags:
+    - gift-adelie
