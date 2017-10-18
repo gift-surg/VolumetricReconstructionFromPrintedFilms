@@ -7,12 +7,9 @@
 # \date       September 2017
 #
 
-import inspect
 import argparse
 
-import pythonhelper.PythonHelper as ph
-
-from numericalsolver.definitions import ALLOWED_NOISE_TYPES
+import pysitk.python_helper as ph
 
 ALLOWED_FILE_EXTENSIONS = ["nii", "nii.gz"]
 
@@ -98,7 +95,7 @@ class InputArgparser(object):
         option_string="--dir-input",
         type=str,
         help="Input directory holding the to obtained motion correction "
-        "results obtained by 'correctMotion.py', "
+        "results obtained by 'correct_motion.py', "
         "e.g. 'dir-motion-correction/Similarity' or "
         "'dir-motion-correction/Affine'.",
         required=False,

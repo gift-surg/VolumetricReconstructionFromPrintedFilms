@@ -7,22 +7,21 @@
 
 
 import os
-import argparse
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.SimpleITKHelper as sitkh
-import pythonhelper.PythonHelper as ph
-import volumetricreconstruction.base.Stack as st
-import volumetricreconstruction.preprocessing.BrainStripping as bs
-import volumetricreconstruction.preprocessing.IntensityCorrection as ic
-import volumetricreconstruction.registration.RegistrationSimpleITK as regsitk
-import volumetricreconstruction.registration.RegistrationCppITK as regitk
-import volumetricreconstruction.registration.NiftyReg as regniftyreg
-import volumetricreconstruction.registration.IntraStackRegistration as intrareg
+import pysitk.simple_itk_helper as sitkh
+import pysitk.python_helper as ph
+import niftymic.base.Stack as st
+import niftymic.preprocessing.BrainStripping as bs
+import niftymic.preprocessing.IntensityCorrection as ic
+import niftymic.registration.RegistrationSimpleITK as regsitk
+import niftymic.registration.RegistrationCppITK as regitk
+import niftymic.registration.NiftyReg as regniftyreg
+import niftymic.registration.IntraStackRegistration as intrareg
 
 import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
-import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
 
 
 def main():
@@ -36,7 +35,7 @@ def main():
         "affine transforms are written to the output directory for each "
         "single slice. "
         "The obtained motion correction results are used as input for "
-        "'reconstructVolume.py' which provides a volumetric "
+        "'reconstruct_volume.py' which provides a volumetric "
         "reconstructions in a subsequent step. "
 
         "Intermediate results can be stored by using the optional "

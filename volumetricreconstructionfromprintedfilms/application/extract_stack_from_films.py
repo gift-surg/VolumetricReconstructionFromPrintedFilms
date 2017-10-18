@@ -7,23 +7,13 @@
 
 
 import os
-import argparse
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.SimpleITKHelper as sitkh
-import pythonhelper.PythonHelper as ph
-import volumetricreconstruction.base.Stack as st
-import volumetricreconstruction.preprocessing.BrainStripping as bs
-import volumetricreconstruction.preprocessing.IntensityCorrection as ic
-import volumetricreconstruction.registration.RegistrationSimpleITK as regsitk
-import volumetricreconstruction.registration.RegistrationCppITK as regitk
-import volumetricreconstruction.registration.NiftyReg as regniftyreg
-import volumetricreconstruction.registration.IntraStackRegistration as intrareg
+import pysitk.python_helper as ph
 
-import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
-import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
-import volumetricreconstructionfromprintedfilms.utilities.ScanExtractor as se
+import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.scan_extractor as se
 
 
 def main():
@@ -37,7 +27,7 @@ def main():
         "acquired slices printed on a 2D film where the correct spatial "
         "position and dimension of each single slice needs to be recovered "
         "in subsequent steps by using "
-        "'correctMotion.py' and 'reconstructVolume.py', respectively.",
+        "'correct_motion.py' and 'reconstruct_volume.py', respectively.",
     )
     input_parser.add_films(required=True)
     input_parser.add_stack(required=True)

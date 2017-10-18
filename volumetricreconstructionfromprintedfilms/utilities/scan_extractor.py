@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# \file ScanExtractor.py
+# \file scan_extractor.py
 #  \brief Extract scans semi-automatically from MR films
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -14,8 +14,8 @@ import os
 import sys
 import matplotlib.pyplot as plt
 
-import pythonhelper.PythonHelper as ph
-import volumetricreconstructionfromprintedfilms.utilities.FigureEventHandling as feh
+import pysitk.python_helper as ph
+import volumetricreconstructionfromprintedfilms.utilities.figure_event_handling as feh
 
 ##
 #       Extract scans semi-automatically from MR films

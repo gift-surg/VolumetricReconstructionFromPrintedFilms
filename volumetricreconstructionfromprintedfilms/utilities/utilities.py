@@ -14,10 +14,10 @@ from natsort import natsorted
 
 
 # Import modules
-import pythonhelper.SimpleITKHelper as sitkh
-import volumetricreconstruction.base.Stack as st
+import pysitk.simple_itk_helper as sitkh
+import niftymic.base.Stack as st
 
-from volumetricreconstruction.definitions import DIR_TMP
+from niftymic.definitions import DIR_TMP
 
 
 ##

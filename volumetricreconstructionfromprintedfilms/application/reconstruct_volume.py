@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# \file reconstructVolume.py
+# \file reconstruct_volume.py
 #  \brief
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -13,16 +13,16 @@ import argparse
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.SimpleITKHelper as sitkh
-import pythonhelper.PythonHelper as ph
-import volumetricreconstruction.base.Stack as st
-import volumetricreconstruction.preprocessing.BrainStripping as bs
-import volumetricreconstruction.preprocessing.IntensityCorrection as ic
-import volumetricreconstruction.reconstruction.solver.TikhonovSolver as tk
-import volumetricreconstruction.reconstruction.solver.ADMMSolver as admm
+import pysitk.simple_itk_helper as sitkh
+import pysitk.python_helper as ph
+import niftymic.base.Stack as st
+import niftymic.preprocessing.BrainStripping as bs
+import niftymic.preprocessing.IntensityCorrection as ic
+import niftymic.reconstruction.solver.TikhonovSolver as tk
+import niftymic.reconstruction.solver.ADMMSolver as admm
 
 import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
-import volumetricreconstructionfromprintedfilms.utilities.InputArgparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
 
 
 def main():
@@ -31,7 +31,7 @@ def main():
 
     input_parser = inargs.InputArgparser(
         description="Based on the estimated transformations obtained by "
-        "'correctMotion.py' a volumetric representation is reconstructed. "
+        "'correct_motion.py' a volumetric representation is reconstructed. "
         "An additional total variation denoising step is performed for "
         "improved visual appearance",
     )

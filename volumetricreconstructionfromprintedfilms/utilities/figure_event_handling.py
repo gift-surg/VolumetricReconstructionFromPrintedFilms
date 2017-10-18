@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-## \file FigureEventHandling.py
+## \file figure_event_handling.py
 #  \brief 
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 ## Import modules
-import pythonhelper.PythonHelper as ph
+import pysitk.python_helper as ph
 
 ##
 #       Class used to semi-automatically extract position and geometry of
