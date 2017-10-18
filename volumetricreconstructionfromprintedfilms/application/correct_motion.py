@@ -12,13 +12,13 @@ import SimpleITK as sitk
 
 import pysitk.simple_itk_helper as sitkh
 import pysitk.python_helper as ph
-import niftymic.base.Stack as st
-import niftymic.preprocessing.BrainStripping as bs
-import niftymic.preprocessing.IntensityCorrection as ic
-import niftymic.registration.RegistrationSimpleITK as regsitk
-import niftymic.registration.RegistrationCppITK as regitk
-import niftymic.registration.NiftyReg as regniftyreg
-import niftymic.registration.IntraStackRegistration as intrareg
+import niftymic.base.stack as st
+import niftymic.preprocessing.brain_stripping as bs
+import niftymic.preprocessing.intensity_correction as ic
+import niftymic.registration.simple_itk_registration as regsitk
+import niftymic.registration.cpp_itk_registration as regitk
+import niftymic.registration.niftyreg as regniftyreg
+import niftymic.registration.intra_stack_registration as intrareg
 
 import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
@@ -253,7 +253,7 @@ def main():
         # use_fixed_mask=True,
         # use_moving_mask=True,
     )
-    # registration_method = regsitk.RegistrationSimpleITK(
+    # registration_method = regsitk.SimpleItkRegistration(
     #     fixed=tmp_fixed,
     #     moving=reference_image,
     #     interpolator="NearestNeighbor",
@@ -302,7 +302,7 @@ def main():
     tmp_fixed = stack_rigidToReference.get_resampled_stack_from_slices(
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
-    registration_itk = regitk.RegistrationCppITK(
+    registration_itk = regitk.CppItkRegistration(
         fixed=tmp_fixed,
         moving=reference_image,
         registration_type="InplaneSimilarity",

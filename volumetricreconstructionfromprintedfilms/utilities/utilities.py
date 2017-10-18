@@ -15,7 +15,7 @@ from natsort import natsorted
 
 # Import modules
 import pysitk.simple_itk_helper as sitkh
-import niftymic.base.Stack as st
+import niftymic.base.stack as st
 
 from niftymic.definitions import DIR_TMP
 

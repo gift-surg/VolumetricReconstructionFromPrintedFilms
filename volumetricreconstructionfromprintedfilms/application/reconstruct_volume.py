@@ -15,11 +15,11 @@ import SimpleITK as sitk
 
 import pysitk.simple_itk_helper as sitkh
 import pysitk.python_helper as ph
-import niftymic.base.Stack as st
-import niftymic.preprocessing.BrainStripping as bs
-import niftymic.preprocessing.IntensityCorrection as ic
-import niftymic.reconstruction.solver.TikhonovSolver as tk
-import niftymic.reconstruction.solver.ADMMSolver as admm
+import niftymic.base.stack as st
+import niftymic.preprocessing.brain_stripping as bs
+import niftymic.preprocessing.intensity_correction as ic
+import niftymic.reconstruction.solver.tikhonov_solver as tk
+import niftymic.reconstruction.solver.admm_solver as admm
 
 import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
