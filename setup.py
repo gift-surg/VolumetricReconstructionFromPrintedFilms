@@ -50,9 +50,9 @@ setup(name='VolumetricReconstructionFromPrintedFilms',
       ],
       entry_points={
           'console_scripts': [
-              'vrpf_extract_stack_from_films = volumetricreconstructionfromprintedfilms.application.extractStackFromFilms:main',
-              'vrpf_correct_motion = volumetricreconstructionfromprintedfilms.application.correctMotion:main',
-              'vrpf_reconstruct_volume = volumetricreconstructionfromprintedfilms.application.reconstructVolume:main',
+              'vrpf_extract_stack_from_films = volumetricreconstructionfromprintedfilms.application.extract_stack_from_films:main',
+              'vrpf_correct_motion = volumetricreconstructionfromprintedfilms.application.correct_motion:main',
+              'vrpf_reconstruct_volume = volumetricreconstructionfromprintedfilms.application.reconstruct_volume:main',
           ],
       },
       )
