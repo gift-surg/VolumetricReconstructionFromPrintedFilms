@@ -1,23 +1,23 @@
 ##
 # \file utilities.py
+#
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       November 2016
 #
 
 
+import SimpleITK as sitk
+import numpy as np
 # Import libraries
 import os
 import re
-import numpy as np
-import SimpleITK as sitk
 from natsort import natsorted
+
+import niftymic.base.stack as st
+import pysitk.simple_itk_helper as sitkh
 
 
 # Import modules
-import pysitk.simple_itk_helper as sitkh
-import niftymic.base.stack as st
-
-from niftymic.definitions import DIR_TMP
 
 
 ##
@@ -33,6 +33,7 @@ from niftymic.definitions import DIR_TMP
 # \return     The updated affine transforms with elements transforms_outer[i]
 # \f$ \circ\f$ transforms_inner[i]
 #
+# noinspection PyPep8,PyBroadException
 def get_updated_affine_transforms(transforms_outer, transforms_inner):
 
     # In case transforms_inner is not an array
@@ -63,21 +64,6 @@ def get_updated_affine_transforms(transforms_outer, transforms_inner):
             transforms_outer[i], transforms_inner[i])
 
     return composite_transforms
-
-
-def get_left_right_mirrored_stack(image_sitk, dir_tmp=DIR_TMP):
-
-    filename_original = os.path.join(dir_tmp, "original.nii.gz")
-    filename_swapped = os.path.join(dir_tmp, "original_swapped.nii.gz")
-    sitk.WriteImage(image_sitk, filename_original)
-
-    cmd = "fslswapdim "
-    cmd += filename_original + " -x y z "
-    cmd += filename_swapped
-    ph.execute_command(cmd)
-
-    image_sitk = sitk.ReadImage(filename_swapped)
-    return image_sitk
 
 
 def write_results_motion_correction(directory,
@@ -116,9 +102,6 @@ def read_results_motion_correction(directory,
                                    suffix_transforms="_slicetransforms_",
                                    ):
 
-    # if directory[-1] is not "/":
-    #     directory += "/"
-
     p = re.compile("(.*)" + suffix_transforms + "[0-9]+[.]tfm")
     slice_transforms = [p.match(f).group(0)
                         for f in os.listdir(directory) if p.match(f)]
@@ -139,34 +122,3 @@ def read_results_motion_correction(directory,
             slice_transforms_sitk[i])
 
     return slice_transforms_sitk, stack_corrected
-
-# def read_results_motion_correction(directory, filename):
-
-#     if directory[-1] is not "/":
-#         directory += "/"
-
-#     stack0 = st.Stack.from_filename(
-#         os.path.join(directory, filename + ".nii.gz"))
-#     stack_corrected = st.Stack.from_slice_filenames(
-#         dir_input=directory,
-#         prefix_stack=filename+"_corrected",
-#         suffix_mask="_mask")
-
-#     slice_transforms_sitk = [None]*stack_corrected.sitk.GetDepth()
-#     for i in range(0, len(slice_transforms_sitk)):
-#         slice_transforms_sitk[i] = sitk.ReadTransform(
-#             os.path.join(directory,
-#                          filename + "_slicetransforms_" + str(i) + ".tfm"))
-#         slice_transforms_sitk[i] = sitk.AffineTransform(
-#             slice_transforms_sitk[i])
-
-#     # Read PD reference used for motion correction
-#     p = re.compile("Ref[_](.*)[.]nii.*")
-#     filename_reference = [p.match(f).group(1)
-#                           for f in os.listdir(directory) if p.match(f)][0]
-
-#     reference_image = st.Stack.from_filename(
-#         os.path.join(directory, "Ref_" + filename_reference + ".nii.gz"))
-#     reference_image.set_filename(filename_reference)
-
-#     return stack0, stack_corrected, slice_transforms_sitk, reference_image

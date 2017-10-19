@@ -1,9 +1,9 @@
-#!/usr/bin/python
-
-# \file
+##
+# \file extract_stack_from_films.py
 #
-#  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
-#  \date Aug 2016
+# \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
+# \date       Aug 2016
+#
 
 
 import os
@@ -38,7 +38,7 @@ def main():
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
 
-    if (".").join(os.path.basename(args.stack).split(".")[1:]) \
+    if ".".join(os.path.basename(args.stack).split(".")[1:]) \
             not in ["nii", "nii.gz"]:
         raise IOError(
             "Output image (--stack) must be of type 'nii' or 'nii.gz'")
@@ -64,13 +64,14 @@ def main():
         spacing[0], spacing[1], spacing[2]))
 
     sitk.WriteImage(image_sitk, args.stack)
-    ph.print_info("Extracted image stack written to '%s'" % (args.stack))
+    ph.print_info("Extracted image stack written to '%s'" % args.stack)
 
     elapsed_time = ph.stop_timing(time_start)
     ph.print_title("Summary Semi-automatic Slice Extraction")
     ph.print_info("Elapsed time: %s" % elapsed_time)
 
     return 0
+
 
 if __name__ == '__main__':
     main()

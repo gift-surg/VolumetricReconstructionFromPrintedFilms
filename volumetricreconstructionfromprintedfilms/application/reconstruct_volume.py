@@ -1,39 +1,36 @@
-#!/usr/bin/python
-
+##
 # \file reconstruct_volume.py
-#  \brief
 #
-#  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
-#  \date Nov 2016
+# \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
+# \date       Nov 2016
+#
 
 
+import SimpleITK as sitk
+import numpy as np
 # Import libraries
 import os
-import argparse
-import numpy as np
-import SimpleITK as sitk
 
-import pysitk.simple_itk_helper as sitkh
-import pysitk.python_helper as ph
 import niftymic.base.stack as st
 import niftymic.preprocessing.brain_stripping as bs
 import niftymic.preprocessing.intensity_correction as ic
-import niftymic.reconstruction.solver.tikhonov_solver as tk
 import niftymic.reconstruction.solver.admm_solver as admm
-
-import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
+import niftymic.reconstruction.solver.tikhonov_solver as tk
+import pysitk.python_helper as ph
+import pysitk.simple_itk_helper as sitkh
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
 
 
+# noinspection PyPep8Naming
 def main():
-
     time_start = ph.start_timing()
 
     input_parser = inargs.InputArgparser(
         description="Based on the estimated transformations obtained by "
-        "'correct_motion.py' a volumetric representation is reconstructed. "
-        "An additional total variation denoising step is performed for "
-        "improved visual appearance",
+                    "'correct_motion.py' a volumetric representation is reconstructed. "
+                    "An additional total variation denoising step is performed for "
+                    "improved visual appearance",
     )
     input_parser.add_stack(required=True)
     input_parser.add_reference(required=True)
@@ -41,7 +38,7 @@ def main():
     input_parser.add_dir_output(
         required=True,
         help="Output directory to store volumetric "
-        "reconstruction results")
+             "reconstruction results")
     input_parser.add_regularization(default="TV")
     input_parser.add_alpha(
         default=0.003  # TV
@@ -108,6 +105,7 @@ def main():
     # Default pixel value for resampling
     # Rationale: Due to high background noise, a zero pixel value would not be
     # suitable
+    # noinspection PyTypeChecker
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
 
@@ -138,6 +136,7 @@ def main():
     # ---------------------------------------------------------------------
     # Resampling to processing and reconstruction grids
     ph.print_title("Resample motion-corrected stack to processing grid")
+    # noinspection PyTypeChecker
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
     stack_resampled = stack.get_resampled_stack_from_slices(
@@ -146,11 +145,11 @@ def main():
         default_pixel_value=default_pixel_value)
     reference_image_resampled = reference_image.get_resampled_stack(
         resampling_grid=resampling_grid_sitk, interpolator="BSpline")
-    stack_resampled.set_filename(filename_stack+"_motion-corrected")
+    stack_resampled.set_filename(filename_stack + "_motion-corrected")
 
     ph.print_title("Resample original stack to reconstruction grid")
     stack0_resampled = st.Stack.from_stack(stack0)
-    i = len(slice_transforms_sitk)/2
+    i = len(slice_transforms_sitk) / 2
     stack0_resampled.update_motion_correction(slice_transforms_sitk[i])
     stack0_resampled = stack0_resampled.get_resampled_stack_from_slices(
         resampling_grid=recon_grid_sitk,
@@ -163,13 +162,13 @@ def main():
         stack0_resampled.get_resampled_stack_from_slices(
             resampling_grid=recon_grid_sitk, interpolator="BSpline")
     stack_naivelyscaled_recon_grid.write(
-        args.dir_output, filename_stack+"_scaled")
+        args.dir_output, filename_stack + "_scaled")
 
     stack_motioncorrected_recon_grid = \
         stack_resampled.get_resampled_stack_from_slices(
             resampling_grid=recon_grid_sitk, interpolator="BSpline")
     stack_motioncorrected_recon_grid.write(
-        args.dir_output, filename_stack+"_motion-corrected")
+        args.dir_output, filename_stack + "_motion-corrected")
 
     # ---------------------------------------------------------------------
     # Perform intensity correction
@@ -187,24 +186,25 @@ def main():
     intensity_correction.run_lower_percentile_capping_of_stack(percentile=25)
     # intensity_correction.use_individual_slice_correction(True)
     intensity_correction.run_linear_intensity_correction()
+    # noinspection PyPep8Naming
     stack_intensityCorrected = intensity_correction.get_intensity_corrected_stack()
     stack0_intensityCorrected = \
         intensity_correction.get_intensity_corrected_additional_stack()
 
     stack_intensityCorrected.set_filename(
-        filename_stack+"_motion-corrected-ic")
-    stack0_intensityCorrected.set_filename(filename_stack+"_scaled-ic")
+        filename_stack + "_motion-corrected-ic")
+    stack0_intensityCorrected.set_filename(filename_stack + "_scaled-ic")
 
     # Write results
     stack_naivelyscaledic_recon_grid = stack0_intensityCorrected
     stack_naivelyscaledic_recon_grid.write(
-        args.dir_output, filename_stack+"_scaled-ic")
+        args.dir_output, filename_stack + "_scaled-ic")
 
     stack_motioncorrectedic_recon_grid = \
         stack_intensityCorrected.get_resampled_stack_from_slices(
             resampling_grid=recon_grid_sitk, interpolator="BSpline")
     stack_motioncorrectedic_recon_grid.write(
-        args.dir_output, filename_stack+"_motion-corrected-ic")
+        args.dir_output, filename_stack + "_motion-corrected-ic")
 
     # verbose:
     if args.verbose:
@@ -302,6 +302,7 @@ def main():
     ph.print_info("Computational time: %s" % elapsed_time)
 
     return 0
+
 
 if __name__ == '__main__':
     main()

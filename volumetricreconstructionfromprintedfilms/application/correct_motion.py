@@ -1,27 +1,25 @@
-#!/usr/bin/python
-
-# \file
+##
+# \file correct_motion.py
 #
-#  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
-#  \date Aug 2016
+# \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
+# \date       Aug 2016
+#
 
 
-import os
-import numpy as np
 import SimpleITK as sitk
+import numpy as np
+import os
 
-import pysitk.simple_itk_helper as sitkh
-import pysitk.python_helper as ph
 import niftymic.base.stack as st
 import niftymic.preprocessing.brain_stripping as bs
 import niftymic.preprocessing.intensity_correction as ic
-import niftymic.registration.simple_itk_registration as regsitk
 import niftymic.registration.cpp_itk_registration as regitk
-import niftymic.registration.niftyreg as regniftyreg
 import niftymic.registration.intra_stack_registration as intrareg
-
-import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
+import niftymic.registration.niftyreg as regniftyreg
+import pysitk.python_helper as ph
+import pysitk.simple_itk_helper as sitkh
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
+import volumetricreconstructionfromprintedfilms.utilities.utilities as utils
 
 
 def main():
@@ -121,6 +119,7 @@ def main():
     # ---------------------------------------------------------------------
     # Downsample image
     ph.print_title("Downsample stack image")
+    # noinspection PyTypeChecker
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
     args.factor_downsampling = int(args.factor_downsampling /
@@ -132,9 +131,9 @@ def main():
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
     ph.print_info("Default pixel value for resampling: %.2f"
-                  % (default_pixel_value))
+                  % default_pixel_value)
     ph.print_info("Downsampling factor (corrected by in-plane spacing): %d"
-                  % (args.factor_downsampling))
+                  % args.factor_downsampling)
 
     # ---------------------------------------------------------------------
     # Skull mask stripping
@@ -152,10 +151,11 @@ def main():
         stack_sitk_mask_downsampled)
     # stack_downsampled.show(1)
 
+    # Counter to write the output images in a consecutive sequence
+    ctr = [-1]
+    
     # Write result
     if args.dir_output_verbose is not None:
-        # Counter to write the output images in a consecutive sequence
-        ctr = [-1]
 
         filename_suffix = "_downsampled" + str(args.factor_downsampling)
         stack_downsampled.set_filename(filename_stack + filename_suffix)
@@ -243,6 +243,7 @@ def main():
     # ---------------------------------------------------------------------
     # Rigid registration to reference
     ph.print_title("Rigid registration to reference")
+    # noinspection PyTypeChecker
     default_pixel_value = np.max((np.percentile(
         np.array(sitk.GetArrayFromImage(stack_downsampled.sitk)), 0.1), 0))
 
@@ -323,7 +324,7 @@ def main():
 
     # Get uniform in-plane scaling factor
     inplane_scale_3D = registration_itk.get_parameters()[6]
-    ph.print_info("inplane_scale_3D = %g" % (inplane_scale_3D))
+    ph.print_info("inplane_scale_3D = %g" % inplane_scale_3D)
 
     # Get all affine transforms to keep track of corrections
     # (Important: Affine transforms incorporate scaling!)
@@ -504,11 +505,6 @@ def main():
             str(ph.add_one(ctr)) + filename_suffix,
             write_mask=False)
 
-    # foo = st.Stack.from_stack(stack_downsampled)
-    # foo.update_motion_correction_of_slices(slice_transforms_sitk)
-    # foo.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk, interpolator="BSpline").show()
-    # stack_final.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk, interpolator="BSpline").show()
-
     # ---------------------------------------------------------------------
     # Write results: In-plane 2D Similar
     stack_final = stack_inplane2Dsimilar
@@ -582,11 +578,6 @@ def main():
             str(ph.add_one(ctr)) + filename_suffix,
             write_mask=False)
 
-    # foo = st.Stack.from_stack(stack_downsampled)
-    # foo.update_motion_correction_of_slices(slice_transforms_sitk)
-    # foo.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk, interpolator="BSpline").show()
-    # stack_final.get_resampled_stack_from_slices(resampling_grid=stack_inplane3DSimilar.sitk, interpolator="BSpline").show()
-
     # ---------------------------------------------------------------------
     # Write results: In-plane 2D Affine
     stack_final = stack_inplane2Daffine
@@ -598,38 +589,12 @@ def main():
         slice_transforms_sitk,
         reference_image)
 
-    # ---------------------------------------------------------------------
-    # Debug:
-    # Read results
-    # stack_tmp, stack_corrected_tmp, slice_transforms_sitk_tmp, \
-    #     reference_image_tmp = \
-    #     utils.ReadWriteMotionCorrectionResults(
-    #     ).read_results_motion_correction(
-    #         args.dir_output + "Similarity", filename_stack)
-
-    # foo = st.Stack.from_stack(stack_tmp)
-    # foo.update_motion_correction_of_slices(slice_transforms_sitk_tmp)
-
-    # sitkh.show_stacks([
-    #     foo.get_resampled_stack_from_slices(
-    #         resampling_grid=stack_inplane3DSimilar, interpolator="BSpline"),
-    #     stack_corrected_tmp.get_resampled_stack_from_slices(
-    #         resampling_grid=stack_inplane3DSimilar, interpolator="BSpline"),
-    # ])
-
-    # sitkh.show_stacks([
-    #     stack_inplane3DSimilar.get_resampled_stack_from_slices(
-    #         interpolator="BSpline"),
-    #     stack_corrected_tmp.get_resampled_stack_from_slices(
-    #         interpolator="BSpline"),
-    #     reference_image,
-    # ])
-
     elapsed_time = ph.stop_timing(time_start)
     ph.print_title("Summary Motion Correction")
     ph.print_info("Computational time: %s" % elapsed_time)
 
     return 0
+
 
 if __name__ == '__main__':
     main()

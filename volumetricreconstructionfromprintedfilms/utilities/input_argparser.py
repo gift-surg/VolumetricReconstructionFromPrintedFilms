@@ -14,7 +14,7 @@ import pysitk.python_helper as ph
 ALLOWED_FILE_EXTENSIONS = ["nii", "nii.gz"]
 
 # Allowed input file types
-FILE_EXTENSIONS = "(" + (", ").join(ALLOWED_FILE_EXTENSIONS) + ")"
+FILE_EXTENSIONS = "(" + ", ".join(ALLOWED_FILE_EXTENSIONS) + ")"
 
 
 ##
@@ -45,10 +45,11 @@ class InputArgparser(object):
     def parse_args(self):
         return self._parser.parse_args()
 
-    def print_arguments(self, args, title="Input Parameters:"):
+    @staticmethod
+    def print_arguments(args, title="Input Parameters:"):
         ph.print_title(title)
         for arg in sorted(vars(args)):
-            ph.print_info("%s: " % (arg), newline=False)
+            ph.print_info("%s: " % arg, newline=False)
             print(getattr(args, arg))
 
     def add_films(
@@ -56,7 +57,7 @@ class InputArgparser(object):
         option_string="--films",
         type=str,
         nargs="+",
-        help="Path to films %s." % ("(.dcm)"),
+        help="Path to films %s." % "(.dcm)",
         required=False,
     ):
         self._add_argument(dict(locals()))
@@ -65,7 +66,7 @@ class InputArgparser(object):
         self,
         option_string="--reference",
         type=str,
-        help="Path to reference image %s." % (FILE_EXTENSIONS),
+        help="Path to reference image %s." % FILE_EXTENSIONS,
         required=False,
     ):
         self._add_argument(dict(locals()))

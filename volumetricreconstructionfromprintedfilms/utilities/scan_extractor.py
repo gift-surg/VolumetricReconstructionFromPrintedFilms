@@ -1,28 +1,26 @@
-#!/usr/bin/python
-
+##
 # \file scan_extractor.py
-#  \brief Extract scans semi-automatically from MR films
+# \brief      Extract scans semi-automatically from MR films
 #
-#  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
-#  \date Nov 2016
+# \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
+# \date       Nov 2016
+#
 
 
 # Import libraries
 import SimpleITK as sitk
+import matplotlib.pyplot as plt
 import numpy as np
 import os
-import sys
-import matplotlib.pyplot as plt
 
 import pysitk.python_helper as ph
 import volumetricreconstructionfromprintedfilms.utilities.figure_event_handling as feh
 
+
 ##
-#       Extract scans semi-automatically from MR films
+# Extract scans semi-automatically from MR films
 # \date       2016-11-02 00:17:44+0000
 #
-
-
 class ScanExtractor(object):
 
     ##
@@ -88,22 +86,14 @@ class ScanExtractor(object):
         return sitk.Image(self._stack_sitk)
 
     ##
-    #       Run semi-automatic pipeline to extract the scans from the film
+    # Run semi-automatic pipeline to extract the scans from the film
     # \date       2016-11-02 00:23:58+0000
     #
-    # \param  dir_input                   The dir input
-    # \param  timepoint                   The timepoint
-    # \param  number_mr_films             The number mr films
-    # \param  selection_window_offset     The selection window offset
-    # \param  selection_window_dimension  The selection window dimension
-    # \param  self._dir_output_verbose                  The dir output
-    #
-    # \return     { description_of_the_return_value }
+    # \param      self  The object
     #
     def run_semiautomatic_image_extraction(self):
 
         stack_nda_list = []
-        self._partial_stack_sitk = []
 
         for i, filename in enumerate(self._filenames):
 
@@ -154,44 +144,37 @@ class ScanExtractor(object):
             if len(coordinates) > 0:
                 # Get stacked array of slices
                 partial_stack_nda = \
-                    self._get_stacked_slices_data_array_from_MR_film(
+                    self._get_stacked_slices_data_array_from_mr_film(
                         nda, coordinates, offset, length)
 
                 # Append partial stack array to list
                 stack_nda_list.append(partial_stack_nda)
 
-                # Convert to sitk.Image
-                self._partial_stack_sitk.append(
-                    sitk.GetImageFromArray(partial_stack_nda))
-
-            # Show image
-            # sitk.Show(self._partial_stack_sitk[i])
-
         if len(stack_nda_list) > 0:
             # Get one entire data array
             stack_nda = \
-                self._get_combined_stacked_slices_data_array_from_MR_films(
+                self._get_combined_stacked_slices_data_array_from_mr_films(
                     stack_nda_list)
 
             # Create sitk.Image
             self._stack_sitk = sitk.GetImageFromArray(stack_nda)
 
     ##
-    #       Get the data array of the stacked slices of one MRI film
+    # Get the data array of the stacked slices of one MRI film
     # \date       2016-09-19 11:07:14+0100
     #
-    # \param  nda          2D data array representing the MRI film
-    # \param  coordinates  The coordinates of selected points of all selected
-    #                          regions, i.e. single scans
-    # \param  offset       The offset describing the north-west corner of each
-    #                          selected region in nda
-    # \param  length       The length describing the length in x and y of each
-    #                          single scan
+    # \param      nda          2D data array representing the MRI film
+    # \param      coordinates  The coordinates of selected points of all
+    #                          selected regions, i.e. single scans
+    # \param      offset       The offset describing the north-west corner of
+    #                          each selected region in nda
+    # \param      length       The length describing the length in x and y of
+    #                          each single scan
     #
     # \return     The stacked slices of partial stack as 3D data array
     #
-    def _get_stacked_slices_data_array_from_MR_film(self,
-                                                    nda,
+    @staticmethod
+    def _get_stacked_slices_data_array_from_mr_film(nda,
                                                     coordinates,
                                                     offset,
                                                     length):
@@ -209,16 +192,17 @@ class ScanExtractor(object):
         return stack_nda
 
     ##
-    #       Gets the combined stack of all slices from all MR films to one
-    #             patient
+    # Gets the combined stack of all slices from all MR films to one patient
     # \date       2016-09-19 11:15:46+0100
     #
-    # \param  stack_nda_list  List of 3D data arrays comprising all the MR
+    # \param      self            The object
+    # \param      stack_nda_list  List of 3D data arrays comprising all the MR
     #                             films
+    #
     # \return     3D data array comprising all 2D slices compound to one stack.
     #
-    def _get_combined_stacked_slices_data_array_from_MR_films(self,
-                                                              stack_nda_list):
+    @staticmethod
+    def _get_combined_stacked_slices_data_array_from_mr_films(stack_nda_list):
 
         N_slices = 0
         for i in range(0, len(stack_nda_list)):
