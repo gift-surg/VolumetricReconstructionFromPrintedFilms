@@ -6,3 +6,69 @@ builddocs:
     - doxygen doxyfile
   tags:
     - gift-adelie
+
+testjob:
+  only:
+    - master
+  script:
+    # save PySiTK folder path just in case
+    - export pysitk_dir=$(pwd)
+    - data_dir=/home/mebner/data/ci/CIS30FU
+    - output_dir=/tmp/CI/VolRecPrintedFilms
+
+    # create a virtual env to dev-test
+    - pyversion=2
+    - venv="pysitk-test-py${pyversion}"
+    - mypython=$(which python${pyversion})
+    - virtualenv -p $mypython $venv
+    - cd $venv
+    - venv_dir=$(pwd)
+    - source bin/activate
+    
+    # print Python version to CI output
+    - which python
+    - python --version
+
+    # copy ITK_NiftyMIC-build WrapITK to site-packages of venv
+    - itkpath=/mnt/shared/mebner/environment/ITK/ITK_NiftyMIC-python${pyversion}-build/Wrapping/Generators/Python/WrapITK.pth
+    - pypath=${venv_dir}/lib/python*/site-packages
+    - cp -v ${itkpath} ${pypath}
+
+    # add CI_JOB_TOKEN for cloning dependent repositories in requirements.txt
+    # (https://docs.gitlab.com/ee/user/project/new_ci_build_permissions_model.html#dependent-repositories)
+    - sed -i -- 's/cmiclab/gitlab-ci-token:${CI_JOB_TOKEN}@cmiclab/g' requirements.txt
+
+    # install requirements
+    - cd $pysitk_dir
+    - pip install -r requirements.txt
+
+    # 1) correct_motion
+    - python vrpf_reconstruct_volume.py \
+    - --stack ${data_dir}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  \
+    - --reference ${data_dir}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz \
+    - --dir-output ${output_dir} \
+    - --dir-output-verbose ${output_dir} \
+    - --itermax 10 \
+    - --factor-downsampling 20 \
+    - --factor-inplane-spacing 1 \
+    - --verbose 0
+
+    # 2) reconstruct_volume
+    - python vrpf_reconstruct_volume.py \
+    - --stack ${data_dir}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  \
+    - --reference ${data_dir}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz \
+    - --dir-input ${output_dir}/Affine \
+    - --dir-output ${output_dir} \
+    - --regularization TV \
+    - --alpha 5 \
+    - --rho 0.5 \
+    - --sigma 0.25 \
+    - --resolution-processing 1 \
+    - --resolution-reconstruction 2 \
+    - --iterations 5 \
+    - --iter-max 5 \
+    - --verbose 0
+
+
+  tags:
+    - gift-adelie    

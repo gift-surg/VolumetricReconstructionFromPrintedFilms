@@ -2,7 +2,7 @@ matplotlib==1.4.3
 natsort==5.0.3
 numpy==1.13.1
 SimpleITK==1.0.1
-git+ssh://git@cmiclab.cs.ucl.ac.uk/gift-surg/PySiTK.git@VolRecPrintedFilms
-git+ssh://git@cmiclab.cs.ucl.ac.uk/gift-surg/NSoL.git@VolRecPrintedFilms
-git+ssh://git@cmiclab.cs.ucl.ac.uk/gift-surg/SimpleReg.git@VolRecPrintedFilms
-git+ssh://git@cmiclab.cs.ucl.ac.uk/gift-surg/NiftyMIC.git@VolRecPrintedFilms
+git+https://cmiclab.cs.ucl.ac.uk/gift-surg/PySiTK.git@VolRecPrintedFilms
+git+https://cmiclab.cs.ucl.ac.uk/gift-surg/NSoL.git@VolRecPrintedFilms
+git+https://cmiclab.cs.ucl.ac.uk/gift-surg/SimpleReg.git@VolRecPrintedFilms
+git+https://cmiclab.cs.ucl.ac.uk/gift-surg/NiftyMIC.git@VolRecPrintedFilms

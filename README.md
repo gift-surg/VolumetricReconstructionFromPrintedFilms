@@ -39,7 +39,7 @@ all dependencies can be installed using `pip`:
 * `pip install -e .`
 
 Note, that
-* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][niftymic] toolkit. It therefore relies on the [ITK version][itkniftymic] specifically developed for this purpose which needs to be installed separately. Therefore, please follow the installation instructions as provided in [NiftyMIC][niftymic].
+* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][niftymic]. Please follow the instructions as provided there for a step-by-step installation.
 * we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
 
@@ -94,7 +94,7 @@ This framework is made available as free open-source software under the [BSD-3-C
 This work is partially funded by the UCL [Engineering and Physical Sciences Research Council (EPSRC)][epsrc] Centre for Doctoral Training in Medical Imaging (EP/L016478/1), the Innovative Engineering for Health award ([Wellcome Trust][wellcometrust] [WT101957] and [EPSRC][epsrc] [NS/A000027/1]), the [Multiple Sclerosis Society of Great Britain and Northern Ireland][mssociety] (grant references 20 and 984) and supported by the [National Institute for Health Research][nihr] [University College London Hospitals (UCLH)][uclh] Biomedical Research Centre. FP is supported by the [Guarantors of Brain][guarantors].
 
 
-[citation]: http://www.sciencedirect.com/science/article/pii/S1053811917308042
+[citation]: https://www.sciencedirect.com/science/article/pii/S1053811917308042
 [mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
 [tig]: http://cmictig.cs.ucl.ac.uk
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
@@ -107,7 +107,7 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 [wellcometrust]: http://www.wellcome.ac.uk
 [mssociety]: https://www.mssociety.org.uk/
 [nihr]: http://www.nihr.ac.uk/research
-[itkniftymic]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction/wikis/home
+[itkniftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/ITK_NiftyMIC/wikis/home
 [niftymic]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction
 [nsol]: https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver
 [simplereg]: https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools
