@@ -68,7 +68,5 @@ testjob:
     - --iterations 5 \
     - --iter-max 5 \
     - --verbose 0
-
-
   tags:
     - gift-adelie    
