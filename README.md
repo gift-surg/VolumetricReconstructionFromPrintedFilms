@@ -2,7 +2,7 @@
 
 This is a research-focused toolkit developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
 
-The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
+The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl]. Please note that currently **only Python 2** is supported.
 
 If you have any questions or comments (or find bugs), please drop an email to `michael.ebner.14@ucl.ac.uk`.
 
@@ -25,10 +25,10 @@ If you use this software in your work, please cite [Ebner et al., 2017][citation
 ## Installation
 
 This toolkit depends on a variety of software packages developed within the [GIFT-Surg][giftsurg] including
-* [NiftyMIC][volumetricreconstruction]
-* [NSoL][numericalsolver]
-* [SimpleReg][registrationtools]
-* [PySiTK][pythonhelper]
+* [NiftyMIC][niftymic]
+* [NSoL][nsol]
+* [SimpleReg][simplereg]
+* [PySiTK][pysitk]
 
 After cloning this repository via
 
@@ -39,7 +39,7 @@ all dependencies can be installed using `pip`:
 * `pip install -e .`
 
 Note, that
-* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][volumetricreconstruction] toolkit. It therefore relies on the ITK version as described there which needs to be installed separately.
+* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][niftymic] toolkit. It therefore relies on the [ITK version][itkniftymic] specifically developed for this purpose which needs to be installed separately. Therefore, please follow the installation instructions as provided in [NiftyMIC][niftymic].
 * we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
 
@@ -107,7 +107,8 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 [wellcometrust]: http://www.wellcome.ac.uk
 [mssociety]: https://www.mssociety.org.uk/
 [nihr]: http://www.nihr.ac.uk/research
-[volumetricreconstruction]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction
-[numericalsolver]: https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver
-[registrationtools]: https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools
-[pythonhelper]: https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper
+[itkniftymic]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction/wikis/home
+[niftymic]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction
+[nsol]: https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver
+[simplereg]: https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools
+[pysitk]: https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper
