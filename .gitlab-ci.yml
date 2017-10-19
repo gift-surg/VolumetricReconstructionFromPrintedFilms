@@ -37,7 +37,8 @@ testjob:
     # add CI_JOB_TOKEN for cloning dependent repositories in requirements.txt
     # (https://docs.gitlab.com/ee/user/project/new_ci_build_permissions_model.html#dependent-repositories)
     - cd $pysitk_dir
-    - sed -i -- 's/cmiclab/gitlab-ci-token:${CI_JOB_TOKEN}@cmiclab/g' requirements.txt
+    - echo ${CI_JOB_TOKEN}
+    - sed -i -- "s/cmiclab/gitlab-ci-token:${CI_JOB_TOKEN}@cmiclab/g" requirements.txt
 
     # install requirements
     - pip install -r requirements.txt
