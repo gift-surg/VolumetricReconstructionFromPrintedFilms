@@ -17,12 +17,10 @@ import niftymic.base.stack as st
 import pysitk.simple_itk_helper as sitkh
 
 
-# Import modules
-
-
 ##
-# Gets the updated affine transforms. At least one input parameter must be a
-# list of transforms!
+# Gets the updated affine transforms.
+#
+# (At least one input parameter must be a list of transforms)
 # \date       2016-11-02 23:38:58+0000
 #
 # \param      transforms_outer  Either as np.array containing list or
@@ -34,6 +32,7 @@ import pysitk.simple_itk_helper as sitkh
 # \f$ \circ\f$ transforms_inner[i]
 #
 # noinspection PyPep8,PyBroadException
+#
 def get_updated_affine_transforms(transforms_outer, transforms_inner):
 
     # In case transforms_inner is not an array
