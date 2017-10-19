@@ -8,7 +8,6 @@
 
 import SimpleITK as sitk
 import numpy as np
-# Import libraries
 import os
 
 import niftymic.base.stack as st
