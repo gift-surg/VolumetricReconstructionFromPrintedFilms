@@ -72,8 +72,8 @@ correct_motion:
     - master
   script:
     - python vrpf_correct_motion.py --stack ${data_dir}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${data_dir}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-output ${output_dir} --dir-output-verbose ${output_dir} --itermax 10 --factor-downsampling 20 --factor-inplane-spacing 1 --verbose 0
-    tags:
-        - gift-adelie    
+  tags:
+  - gift-adelie    
 
 reconstruct_volume:
   only:
