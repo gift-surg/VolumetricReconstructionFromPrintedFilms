@@ -4,10 +4,10 @@ variables:
     TMPDIR: ./tmp
     DATADIR: /home/mebner/data/ci/CIS30FU
     VENV: pysitk-test-py${PY_VERSION}
-    ITK_DIR: /mnt/shared/mebner/environment/ITK/ITK_NiftyMIC-python${PY_VERSION}-build/
+    ITK_DIR: /mnt/shared/mebner/environment/ITK/ITK_NiftyMIC-python${PY_VERSION}-build
     ITK_WRAPITK: ${ITK_DIR}/Wrapping/Generators/Python/WrapITK.pth
     NIFTYREG_INSTALL: /mnt/shared/mebner/environment/NiftyReg/NiftyReg-master-install
-    FSL_INSTALL: /mnt/shared/mebner/environment/FSL/fsl/
+    FSL_INSTALL: /mnt/shared/mebner/environment/FSL/fsl
     CONVERT3D_INSTALL: /mnt/shared/mebner/environment/Convert3D/c3d-git-install
 
 before_script:
