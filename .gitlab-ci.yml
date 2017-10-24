@@ -19,8 +19,8 @@ before_script:
     # add Convert3D to path
     - export PATH="${CONVERT3D_INSTALL}/bin:$PATH"
 
-    # save PySiTK folder path just in case
-    - export pysitk_dir=$(pwd)
+    # save current folder path just in case
+    - export cwd_dir=$(pwd)
 
     # create a virtual env to dev-test
     - rm -rf ${VENV}
@@ -40,7 +40,7 @@ before_script:
 
     # add CI_JOB_TOKEN for cloning dependent repositories in requirements.txt
     # (https://docs.gitlab.com/ee/user/project/new_ci_build_permissions_model.html#dependent-repositories)
-    - cd $pysitk_dir
+    - cd $cwd_dir
     - sed -i -- "s/cmiclab/gitlab-ci-token:${CI_JOB_TOKEN}@cmiclab/g" requirements.txt
 
     # set environment variables for installation
@@ -55,7 +55,7 @@ before_script:
     - pip install -e .
 
     - pip list
-    
+
 
 after_script:
     # delete tmp-directory
