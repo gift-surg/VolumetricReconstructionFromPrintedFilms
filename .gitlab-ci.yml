@@ -2,6 +2,7 @@
 variables:
     PY_VERSION: 2
     TMPDIR: ./tmp
+    DATADIR: /home/mebner/data/ci/CIS30FU
     VENV: pysitk-test-py${PY_VERSION}
     ITK_DIR: /mnt/shared/mebner/environment/ITK/ITK_NiftyMIC-python${PY_VERSION}-build/
     ITK_WRAPITK: ${ITK_DIR}/Wrapping/Generators/Python/WrapITK.pth
@@ -46,16 +47,11 @@ before_script:
     # set environment variables for installation
     - export NIFTYMIC_ITK_DIR=$ITK_DIR
 
-    - pip list
     # install requirements
     - pip install -r requirements.txt
 
-    - pip list
     # run installation
     - pip install -e .
-
-    - pip list
-
 
 after_script:
     # delete tmp-directory
@@ -76,7 +72,7 @@ correct_motion:
   only:
     - master
   script:
-    - python vrpf_correct_motion.py --stack ${data_dir}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${data_dir}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-output ${output_dir} --dir-output-verbose ${output_dir} --itermax 10 --factor-downsampling 20 --factor-inplane-spacing 1 --verbose 0
+    - python vrpf_correct_motion.py --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-output ${TMPDIR} --dir-output-verbose ${TMPDIR} --iter-max 10 --factor-downsampling 20 --factor-inplane-spacing 1 --verbose 0
   tags:
   - gift-adelie    
 
@@ -84,6 +80,6 @@ reconstruct_volume:
   only:
     - master
   script:
-    - python vrpf_reconstruct_volume.py --stack ${data_dir}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${data_dir}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-input ${output_dir}/Affine --dir-output ${output_dir} --regularization TV --alpha 5 --rho 0.5 --sigma 0.25 --resolution-processing 1 --resolution-reconstruction 2 --iterations 5 --iter-max 5 --verbose 0
+    - python vrpf_reconstruct_volume.py --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-input ${DATADIR}/A5208316-B0702861-5yr_motion_correction/Affine --dir-output ${TMPDIR} --regularization TV --alpha 5 --rho 0.5 --sigma 0.25 --resolution-processing 1 --resolution-reconstruction 2 --iterations 5 --iter-max 5 --verbose 0
   tags:
     - gift-adelie    
