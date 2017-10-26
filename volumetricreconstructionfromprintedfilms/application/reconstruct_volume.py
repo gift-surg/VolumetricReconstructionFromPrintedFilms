@@ -11,10 +11,10 @@ import numpy as np
 import os
 
 import niftymic.base.stack as st
-import niftymic.preprocessing.brain_stripping as bs
-import niftymic.preprocessing.intensity_correction as ic
-import niftymic.reconstruction.solver.admm_solver as admm
-import niftymic.reconstruction.solver.tikhonov_solver as tk
+import niftymic.reconstruction.admm_solver as admm
+import niftymic.reconstruction.tikhonov_solver as tk
+import niftymic.utilities.brain_stripping as bs
+import niftymic.utilities.intensity_correction as ic
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs

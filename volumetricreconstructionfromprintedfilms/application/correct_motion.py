@@ -11,11 +11,11 @@ import numpy as np
 import os
 
 import niftymic.base.stack as st
-import niftymic.preprocessing.brain_stripping as bs
-import niftymic.preprocessing.intensity_correction as ic
 import niftymic.registration.cpp_itk_registration as regitk
 import niftymic.registration.intra_stack_registration as intrareg
 import niftymic.registration.niftyreg as regniftyreg
+import niftymic.utilities.brain_stripping as bs
+import niftymic.utilities.intensity_correction as ic
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
