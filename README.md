@@ -104,7 +104,7 @@ This framework is made available as free open-source software under the [BSD-3-C
 
 
 ## Funding
-This work is partially funded by the UCL [Engineering and Physical Sciences Research Council (EPSRC)][epsrc] Centre for Doctoral Training in Medical Imaging (EP/L016478/1), the Innovative Engineering for Health award ([Wellcome Trust][wellcometrust] [WT101957] and [EPSRC][epsrc] [NS/A000027/1]), the [Multiple Sclerosis Society of Great Britain and Northern Ireland][mssociety] (grant references 20 and 984) and supported by the [National Institute for Health Research][nihr] [University College London Hospitals (UCLH)][uclh] Biomedical Research Centre. FP is supported by the [Guarantors of Brain][guarantors].
+This work is partially funded by the UCL [Engineering and Physical Sciences Research Council (EPSRC)][epsrc] Centre for Doctoral Training in Medical Imaging (EP/L016478/1), the Innovative Engineering for Health award ([Wellcome Trust][wellcometrust] [WT101957] and [EPSRC][epsrc] [NS/A000027/1]), the [Multiple Sclerosis Society of Great Britain and Northern Ireland][mssociety] (grant references 20 and 984) and supported by researchers at the [National Institute for Health Research][nihr] [University College London Hospitals (UCLH)][uclh] Biomedical Research Centre. FP is supported by the [Guarantors of Brain][guarantors].
 
 
 [citation]: https://www.sciencedirect.com/science/article/pii/S1053811917308042
