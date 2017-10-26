@@ -74,7 +74,6 @@ installation:
     - master
   script:
     - python -m nose tests/installation_test.py
-    - doxygen doxyfile
   tags:
     - gift-adelie
 
