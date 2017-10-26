@@ -38,7 +38,7 @@ It builds on a couple of additional libraries developed within the [GIFT-Surg][g
 
 whose installation requirements need to be met:
 
-1. [Installation of NiftyMIC_ITK][itkniftymic]
+1. [Installation of ITK_NiftyMIC][itkniftymic]
 1. [Installation of SimpleReg dependencies][simplereg-dependencies]
 
 Afterwards, clone this repository via
