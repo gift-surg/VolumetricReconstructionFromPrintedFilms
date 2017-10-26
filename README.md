@@ -1,6 +1,6 @@
 # Volumetric Reconstruction from Printed Films
 
-This is a research-focused toolkit developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
+This is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl]. Please note that currently **only Python 2** is supported.
 
