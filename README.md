@@ -51,6 +51,9 @@ where all remaining dependencies can be installed using `pip`:
 
 Note, that we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
+Check installation via
+* `python -m nose tests/installation_test.py`
+
 
 ## Example usage
 
