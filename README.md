@@ -38,7 +38,7 @@ It builds on a couple of additional libraries developed within the [GIFT-Surg][g
 
 whose installation requirements need to be met:
 
-1. [Installation of NiftyMIC_ITK][itkniftymic]
+1. [Installation of ITK_NiftyMIC][itkniftymic]
 1. [Installation of SimpleReg dependencies][simplereg-dependencies]
 
 Afterwards, clone this repository via
@@ -124,5 +124,5 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 [niftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NiftyMIC
 [nsol]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NSoL
 [simplereg]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg
-[simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-depend
+[simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-dependencies
 [pysitk]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/PySiTK
