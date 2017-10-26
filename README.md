@@ -1,6 +1,6 @@
 # Volumetric Reconstruction from Printed Films
 
-This is a research-focused toolkit developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
+This is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl]. Please note that currently **only Python 2** is supported.
 
@@ -24,23 +24,32 @@ If you use this software in your work, please cite [Ebner et al., 2017][citation
 
 ## Installation
 
-This toolkit depends on a variety of software packages developed within the [GIFT-Surg][giftsurg] including
+This toolkit is currently supported for **Python 2 only** and was tested on
+
+* Mac OS X 10.10, 10.12
+* Ubuntu 14.04 and 16.04
+
+It builds on a couple of additional libraries developed within the [GIFT-Surg][giftsurg] project including 
 * [NiftyMIC][niftymic]
 * [NSoL][nsol]
 * [SimpleReg][simplereg]
 * [PySiTK][pysitk]
+* [ITK_NiftyMIC][itkniftymic]
 
-After cloning this repository via
+whose installation requirements need to be met:
+
+1. [Installation of NiftyMIC_ITK][itkniftymic]
+1. [Installation of SimpleReg dependencies][simplereg-dependencies]
+
+Afterwards, clone this repository via
 
 * `git clone git@github.com:gift-surg/VolumetricReconstructionFromPrintedFilms.git`
 
-all dependencies can be installed using `pip`:
+where all remaining dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
 * `pip install -e .`
 
-Note, that
-* the current version relies on the deconvolution operator as implemented in the [NiftyMIC][niftymic]. Please follow the instructions as provided there for a step-by-step installation.
-* we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
+Note, that we suggest using the matplotlib version 1.4.3 as more recent versions (we tried matplotlib >= 2.0.0) may slow down the visualization performance of the semi-automatic slice extraction tool substantially.
 
 
 ## Example usage
@@ -108,7 +117,8 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 [mssociety]: https://www.mssociety.org.uk/
 [nihr]: http://www.nihr.ac.uk/research
 [itkniftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/ITK_NiftyMIC/wikis/home
-[niftymic]: https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction
-[nsol]: https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver
-[simplereg]: https://cmiclab.cs.ucl.ac.uk/mebner/RegistrationTools
-[pysitk]: https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper
+[niftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NiftyMIC
+[nsol]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NSoL
+[simplereg]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg
+[simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-depend
+[pysitk]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/PySiTK
