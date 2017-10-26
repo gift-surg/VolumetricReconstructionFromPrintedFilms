@@ -43,6 +43,13 @@ def main():
         raise IOError(
             "Output image (--stack) must be of type 'nii' or 'nii.gz'")
 
+    for film in args.films:
+        if ".".join(os.path.basename(film).split(".")[1:]) \
+                not in ["dcm", "nii", "nii.gz"]:
+            raise IOError(
+                "Input films (--films) must be of type 'dcm', 'nii' or "
+                "'nii.gz'")
+
     if args.verbose:
         dir_output_verbose = os.path.dirname(args.stack)
     else:

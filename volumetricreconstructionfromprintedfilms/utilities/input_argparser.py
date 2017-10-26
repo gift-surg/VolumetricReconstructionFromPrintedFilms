@@ -57,7 +57,7 @@ class InputArgparser(object):
         option_string="--films",
         type=str,
         nargs="+",
-        help="Path to films %s." % "(.dcm)",
+        help="Path to films %s." % "(.dcm, .nii or .nii.gz)",
         required=False,
     ):
         self._add_argument(dict(locals()))

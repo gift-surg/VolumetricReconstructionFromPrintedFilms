@@ -66,6 +66,7 @@ Run the semi-automatic slice extraction tool to create a a digital image stack f
 --slice-thickness known-slice-thickness
 `
 
+The current version accepts DICOM (`.dcm`) and NIfTI (`.nii` or `.nii.gz`) as input film types.
 A handbook on how to use the semi-automatic slice extraction tool can be found in `doc/`.
 
 ---
