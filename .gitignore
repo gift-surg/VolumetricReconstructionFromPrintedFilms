@@ -1,4 +1,6 @@
 data
-doc/html
-doc/latex
+html
+latex
 *.docx
+*.pyc
+*.egg-info
