@@ -43,4 +43,4 @@ class ReconstructVolumeTest(unittest.TestCase):
                         resolution_reconstruction)
 
         cmd = "vrpf_reconstruct_volume %s" % (" ").join(cmd_args)
-        ph.execute_command(cmd)
+        self.assertEqual(ph.execute_command(cmd), 0)
