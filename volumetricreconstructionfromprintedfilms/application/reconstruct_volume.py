@@ -125,7 +125,7 @@ def main():
     ph.print_title("Get brain mask for reference image")
     brain_stripping = bs.BrainStripping()
     brain_stripping.set_input_image_sitk(reference_image.sitk)
-    brain_stripping.run_stripping()
+    brain_stripping.run()
     reference_image_sitk_mask = brain_stripping.get_brain_mask_sitk()
     reference_image = st.Stack.from_sitk_image(
         reference_image.sitk,
@@ -255,7 +255,7 @@ def main():
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
         )
-        volumetric_recon.run_reconstruction()
+        volumetric_recon.run()
         HR_volume0 = volumetric_recon.get_reconstruction()
 
         volumetric_recon = admm.ADMMSolver(
@@ -269,7 +269,7 @@ def main():
             iterations=args.iterations,
         )
 
-    volumetric_recon.run_reconstruction()
+    volumetric_recon.run()
 
     stack_reconstructed = volumetric_recon.get_reconstruction()
     stack_reconstructed.set_filename(

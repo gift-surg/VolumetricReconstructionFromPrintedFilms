@@ -110,7 +110,7 @@ def main():
     ph.print_title("Get brain mask for reference image")
     brain_stripping = bs.BrainStripping()
     brain_stripping.set_input_image_sitk(reference_image_sitk)
-    brain_stripping.run_stripping()
+    brain_stripping.run()
     reference_image_sitk_mask = brain_stripping.get_mask_around_skull(
         dilate_radius=0, erode_radius=0)
     reference_image = st.Stack.from_sitk_image(
@@ -141,7 +141,7 @@ def main():
     brain_stripping = bs.BrainStripping(
         compute_brain_mask=True, compute_skull_image=True)
     brain_stripping.set_input_image_sitk(stack_sitk_downsampled)
-    brain_stripping.run_stripping()
+    brain_stripping.run()
     # stack_sitk_mask_downsampled = brain_stripping.get_brain_mask_sitk()
     stack_sitk_mask_downsampled = brain_stripping.get_mask_around_skull(
         dilate_radius=0, erode_radius=0)
@@ -176,7 +176,7 @@ def main():
         optimizer_loss="linear",
         use_verbose=True,
     )
-    inplane_registration.run_registration()
+    inplane_registration.run()
     inplane_registration.print_statistics()
     stack_selfRigidInplane = inplane_registration.get_corrected_stack()
 
@@ -232,7 +232,7 @@ def main():
     # brain_stripping = bs.BrainStripping(
     #     compute_brain_mask=True, compute_skull_image=True)
     # brain_stripping.set_input_image_sitk(tmp_fixed.sitk)
-    # brain_stripping.run_stripping()
+    # brain_stripping.run()
     # tmp_fixed_mask_sitk = brain_stripping.get_mask_around_skull(
     #     dilate_radius=0, erode_radius=0)
     # tmp_fixed = st.Stack.from_sitk_image(
@@ -265,7 +265,7 @@ def main():
     #     # use_moving_mask=True,
     #     use_verbose=True,
     # )
-    registration_method.run_registration()
+    registration_method.run()
     stack_rigidToReference = registration_method.get_transformed_fixed()
 
     # Get slice transforms
@@ -317,7 +317,7 @@ def main():
         # metric="MattesMutualInformation",
         use_verbose=False,
     )
-    registration_itk.run_registration()
+    registration_itk.run()
     stack_inplane3DSimilar = \
         registration_itk.get_stack_with_similarity_inplane_transformed_slices(
             stack_rigidToReference)
@@ -372,7 +372,7 @@ def main():
     brain_stripping = bs.BrainStripping(
         compute_brain_mask=True, compute_skull_image=True)
     brain_stripping.set_input_image_sitk(stack_tmp_sitk)
-    brain_stripping.run_stripping()
+    brain_stripping.run()
     stack_sitk_mask_downsampled = brain_stripping.get_mask_around_skull(
         dilate_radius=10, erode_radius=0)
     stack_tmp = st.Stack.from_sitk_image(
@@ -440,7 +440,7 @@ def main():
 
     # Variant A: Identity initialization
     inplane_registration.set_transform_initializer_type("identity")
-    inplane_registration.run_registration()
+    inplane_registration.run()
     inplane_registration.print_statistics()
     final_cost = inplane_registration.get_final_cost()
     slice_transforms_sitk_update = \
@@ -461,7 +461,7 @@ def main():
 
     # Variant B: Moments initialization
     inplane_registration.set_transform_initializer_type("moments")
-    inplane_registration.run_registration()
+    inplane_registration.run()
     inplane_registration.print_statistics()
 
     # Pick best fit between variant A and B
@@ -540,7 +540,7 @@ def main():
     inplane_registration.set_alpha_neighbour(1)
     inplane_registration.set_alpha_parameter(1e3)
     inplane_registration.set_optimizer_loss("soft_l1")
-    inplane_registration.run_registration()
+    inplane_registration.run()
     inplane_registration.print_statistics()
     stack_inplane2Daffine = inplane_registration.get_corrected_stack()
 
