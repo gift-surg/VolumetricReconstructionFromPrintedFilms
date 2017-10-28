@@ -16,7 +16,7 @@ from volumetricreconstructionfromprintedfilms.definitions import \
     DIR_TMP, DIR_TEST
 
 
-class CorrectMotinoTest(unittest.TestCase):
+class CorrectMotionTest(unittest.TestCase):
 
     def test_correct_motion(self):
 
@@ -38,4 +38,4 @@ class CorrectMotinoTest(unittest.TestCase):
         cmd_args.append("--iter-max %s" % iter_max)
 
         cmd = "vrpf_correct_motion %s" % (" ").join(cmd_args)
-        ph.execute_command(cmd)
+        self.assertEqual(ph.execute_command(cmd), 0)

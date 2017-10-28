@@ -26,7 +26,7 @@ If you use this software in your work, please cite [Ebner et al., 2017][citation
 
 This toolkit is currently supported for **Python 2 only** and was tested on
 
-* Mac OS X 10.10, 10.12
+* Mac OS X 10.10 and 10.12
 * Ubuntu 14.04 and 16.04
 
 It builds on a couple of additional libraries developed within the [GIFT-Surg][giftsurg] project including 

@@ -32,4 +32,4 @@ class ExtractStackFromFilmsTest(unittest.TestCase):
         cmd_args.append("--inplane-spacing 0.14")
         cmd_args.append("--slice-thickness 5")
         cmd = "vrpf_extract_stack_from_films %s" % (" ").join(cmd_args)
-        ph.execute_command(cmd)
+        self.assertEqual(ph.execute_command(cmd), 0)
