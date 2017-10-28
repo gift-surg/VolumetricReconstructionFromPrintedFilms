@@ -80,7 +80,16 @@ correct_motion:
   only:
     - master
   script:
-    - python vrpf_correct_motion.py --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-output ${TMPDIR} --dir-output-verbose ${TMPDIR} --iter-max 10 --factor-downsampling 20 --factor-inplane-spacing 1 --verbose 0
+    - >
+      python vrpf_correct_motion.py 
+      --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz 
+      --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz 
+      --dir-output ${TMPDIR} 
+      --dir-output-verbose ${TMPDIR} 
+      --iter-max 10 
+      --factor-downsampling 20 
+      --factor-inplane-spacing 1 
+      --verbose 0
   tags:
     - gift-adelie    
 
@@ -88,6 +97,20 @@ reconstruct_volume:
   only:
     - master
   script:
-    - python vrpf_reconstruct_volume.py --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz --dir-input ${DATADIR}/A5208316-B0702861-5yr_motion_correction/Affine --dir-output ${TMPDIR} --regularization TV --alpha 5 --rho 0.5 --sigma 0.25 --resolution-processing 1 --resolution-reconstruction 2 --iterations 5 --iter-max 5 --verbose 0
+    - >
+      python vrpf_reconstruct_volume.py 
+      --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  
+      --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz 
+      --dir-input ${DATADIR}/A5208316-B0702861-5yr_motion_correction/Affine 
+      --dir-output ${TMPDIR} 
+      --regularization TV 
+      --alpha 5 
+      --rho 0.5 
+      --sigma 0.25 
+      --resolution-processing 1 
+      --resolution-reconstruction 2 
+      --iterations 5 
+      --iter-max 5 
+      --verbose 0
   tags:
     - gift-adelie
