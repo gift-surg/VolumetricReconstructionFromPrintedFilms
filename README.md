@@ -18,6 +18,7 @@ A fully automatic volumetric reconstruction framework to estimate the lost meta-
 1. **Recover the 3D Volume using Isotropic Total Variation Denoising:**
 A final isotropic total variation in-plane deconvolution technique serves to revitalise the visual appearance of the reconstructed stack of printed slices.
 
+
 ## How to cite
 If you use this software in your work, please cite [Ebner et al., 2017][citation].
 
