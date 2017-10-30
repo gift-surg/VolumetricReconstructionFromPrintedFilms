@@ -61,12 +61,13 @@ Check installation via
 
 Run the semi-automatic slice extraction tool to create a a digital image stack from printed slices:
 
-* `python vrpf_extract_stack_from_films \
+```
+vrpf_extract_stack_from_films \
 --films path-to-film1.dcm ... path-to-filmN.dcm \
 --stack path-to-extracted-stack.nii.gz \
 --inplane-spacing initial-guess-in-plane-spacing \
 --slice-thickness known-slice-thickness
-`
+```
 
 The current version accepts DICOM (`.dcm`) and NIfTI (`.nii` or `.nii.gz`) as input film types.
 A handbook on how to use the semi-automatic slice extraction tool can be found in `doc/`.
@@ -75,12 +76,13 @@ A handbook on how to use the semi-automatic slice extraction tool can be found i
 
 Recover the meta-data information and correct for in-plane motion of each individual slice by using a reference volume.
 
-* `python vrpf_correct_motion.py \
+```
+vrpf_correct_motion \
 --stack path-to-extracted-stack.nii.gz \
 --reference path-to-reference-volume.nii.gz \
 --dir-output output-directory-for-motion-correction-results \
 --dir-output-verbose output-directory-for-intermediate-results
-`
+```
 
 Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice. The obtained motion correction results are
 used as input for 'reconstructVolume.py' which provides a volumetric
@@ -91,14 +93,15 @@ reconstructions in a subsequent step.
 Based on the estimated transformations a volumetric representation is reconstructed. An additional total variation denoising step is performed for improved visual appearance.
 
 An example call reads:
-* `python vrpf_reconstruct_volume.py \
+```
+vrpf_reconstruct_volume \
 --stack path-to-extracted-stack.nii.gz \
 --reference path-to-reference-volume.nii.gz \
 --dir-input path-to-motion-correction-results/Similarity \
 --dir-output output-directory \
 --regularization TV \
 --alpha 0.005
-`
+```
 
 ## Licensing and Copyright
 Copyright (c) 2017, [University College London][ucl].
