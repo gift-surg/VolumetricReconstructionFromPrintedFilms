@@ -84,8 +84,8 @@ vrpf_correct_motion \
 --dir-output-verbose output-directory-for-intermediate-results
 ```
 
-Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice. The obtained motion correction results are
-used as input for 'reconstructVolume.py' which provides a volumetric
+Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice in separate folders called `Similarity` and `Affine`, respectively. The obtained motion correction results are
+used as input for 'vrpf_reconstruct_volume.py' which provides a volumetric
 reconstructions in a subsequent step.
 
 ---
