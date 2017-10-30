@@ -6,6 +6,7 @@ The algorithm and software were developed by [Michael Ebner][mebner] at the [Tra
 
 If you have any questions or comments, please drop an email to `michael.ebner.14@ucl.ac.uk`.
 
+
 ## How it works
 
 1. **Run the Semi-Automatic Slice Extraction Tool:**
