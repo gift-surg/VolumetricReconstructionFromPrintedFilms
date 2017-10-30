@@ -4,7 +4,7 @@ This is a Python-based open-source toolkit for research developed within the [GI
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl]. Please note that currently **only Python 2** is supported.
 
-If you have any questions or comments (or find bugs), please drop an email to `michael.ebner.14@ucl.ac.uk`.
+If you have any questions or comments, please drop an email to `michael.ebner.14@ucl.ac.uk`.
 
 ## How it works
 
