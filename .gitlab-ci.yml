@@ -60,8 +60,6 @@ after_script:
 
 # ----------------------------------Test Jobs----------------------------------
 builddocs:
-  only:
-    - master
   script:
     - cd doc
     - doxygen doxyfile
@@ -69,16 +67,12 @@ builddocs:
     - gift-adelie
 
 installation:
-  only:
-    - master
   script:
     - python -m nose tests/installation_test.py
   tags:
     - gift-adelie
 
 correct_motion:
-  only:
-    - master
   script:
     - >
       python vrpf_correct_motion.py 
@@ -94,8 +88,6 @@ correct_motion:
     - gift-adelie    
 
 correct_motion_rigid_only:
-  only:
-    - master
   script:
     - >
       python vrpf_correct_motion.py 
@@ -112,8 +104,6 @@ correct_motion_rigid_only:
     - gift-adelie 
 
 reconstruct_volume:
-  only:
-    - master
   script:
     - >
       python vrpf_reconstruct_volume.py 
@@ -134,8 +124,6 @@ reconstruct_volume:
     - gift-adelie
 
 reconstruct_volume_no_ic:
-  only:
-    - master
   script:
     - >
       python vrpf_reconstruct_volume.py 
