@@ -122,18 +122,6 @@ def main():
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
 
-    # verbose:
-    if args.verbose:
-        sitkh.show_stacks([
-            stack.get_resampled_stack_from_slices(
-                resampling_grid=recon_grid_sitk,
-                interpolator="BSpline",
-                default_pixel_value=default_pixel_value),
-            reference_image.get_resampled_stack(
-                resampling_grid=recon_grid_sitk,
-                interpolator="BSpline")
-        ])
-
     # Write results
     i = len(slice_transforms_sitk) / 2  # select midslice trafo for alignment
     stack0.update_motion_correction(slice_transforms_sitk[i])
@@ -142,16 +130,28 @@ def main():
             resampling_grid=recon_grid_sitk,
             interpolator="BSpline",
             default_pixel_value=default_pixel_value)
-    stack_naivelyscaled_recon_grid.write(
-        args.dir_output, filename_stack + "_recon-space")
+    stack_naivelyscaled_recon_grid.set_filename(
+        filename_stack + "_recon-space")
+    stack_naivelyscaled_recon_grid.write(args.dir_output)
 
     stack_motioncorrected_recon_grid = \
         stack.get_resampled_stack_from_slices(
             resampling_grid=recon_grid_sitk,
             interpolator="BSpline",
             default_pixel_value=default_pixel_value)
-    stack_motioncorrected_recon_grid.write(
-        args.dir_output, filename_stack + "_motion-corrected")
+    stack_motioncorrected_recon_grid.set_filename(
+        filename_stack + "_motion-corrected")
+    stack_motioncorrected_recon_grid.write(args.dir_output)
+
+    # verbose:
+    if args.verbose:
+        sitkh.show_stacks([
+            stack_naivelyscaled_recon_grid,
+            stack_motioncorrected_recon_grid,
+            reference_image.get_resampled_stack(
+                resampling_grid=recon_grid_sitk,
+                interpolator="BSpline")
+        ])
 
     # ---------------------------------------------------------------------
     # Get brain mask for reference image
@@ -212,7 +212,8 @@ def main():
 
         stack_intensityCorrected.set_filename(
             filename_stack + "_motion-corrected-ic")
-        stack0_intensityCorrected.set_filename(filename_stack + "_recon-space-ic")
+        stack0_intensityCorrected.set_filename(
+            filename_stack + "_recon-space-ic")
     else:
         stack_intensityCorrected = stack_resampled
         stack0_intensityCorrected = stack0_resampled
@@ -220,26 +221,27 @@ def main():
     # Write results
     if args.intensity_correction:
         stack_naivelyscaledic_recon_grid = stack0_intensityCorrected
-        stack_naivelyscaledic_recon_grid.write(
-            args.dir_output, filename_stack + "_recon-space-ic")
+        stack_naivelyscaledic_recon_grid.set_filename(
+            filename_stack + "_recon-space-ic")
+        stack_naivelyscaledic_recon_grid.write(args.dir_output)
 
         stack_motioncorrectedic_recon_grid = \
             stack_intensityCorrected.get_resampled_stack_from_slices(
                 resampling_grid=recon_grid_sitk, interpolator="BSpline")
-        stack_motioncorrectedic_recon_grid.write(
-            args.dir_output, filename_stack + "_motion-corrected-ic")
+        stack_motioncorrectedic_recon_grid.set_filename(
+            filename_stack + "_motion-corrected-ic")
+        stack_motioncorrectedic_recon_grid.write(args.dir_output)
 
     # verbose:
     if args.verbose:
-        tmp = [
-            stack_naivelyscaled_recon_grid,
-            stack_motioncorrected_recon_grid,
-        ]
         if args.intensity_correction:
-            tmp.append(stack_naivelyscaledic_recon_grid)
-            tmp.append(stack_motioncorrectedic_recon_grid)
-        tmp.append(reference_image_resampled)
-        sitkh.show_stacks(tmp)
+            sitkh.show_stacks(
+                [stack_naivelyscaled_recon_grid,
+                 stack_motioncorrected_recon_grid,
+                 stack_naivelyscaledic_recon_grid,
+                 stack_motioncorrectedic_recon_grid,
+                 reference_image_resampled,
+                 ])
     # ---------------------------------------------------------------------
     # Extract mask from reference
     ph.print_title("Extract mask from reference")
