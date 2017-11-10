@@ -84,9 +84,9 @@ vrpf_correct_motion \
 --dir-output-verbose output-directory-for-intermediate-results
 ```
 
-Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice in separate folders called `Similarity` and `Affine`, respectively. The obtained motion correction results are
-used as input for `vrpf_reconstruct_volume.py` which provides a volumetric
-reconstruction in a subsequent step.
+Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice in separate folders called `Similarity` and `Affine`, respectively.
+It is possible to run in-plane rigid motion correction only by setting the flag `--rigid-only 1` which will write the obtained motion correction results to the folder `Rigid` instead.
+The obtained motion correction results are used as input for `vrpf_reconstruct_volume.py` which provides a volumetric reconstruction in a subsequent step.
 
 ---
 
@@ -100,8 +100,12 @@ vrpf_reconstruct_volume \
 --dir-input path-to-motion-correction-results/Similarity \
 --dir-output output-directory \
 --regularization TV \
---alpha 0.005
+--alpha 0.005 \
+--sigma2 0.25
 ```
+
+In case a negative variance is provided, e.g. `--sigma2 -1`, the in-plane
+deblurring is estimated automatically from the pixel dimensions of `stack`.
 
 ## Licensing and Copyright
 Copyright (c) 2017, [University College London][ucl].
