@@ -93,6 +93,24 @@ correct_motion:
   tags:
     - gift-adelie    
 
+correct_motion_rigid_only:
+  only:
+    - master
+  script:
+    - >
+      python vrpf_correct_motion.py 
+      --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz 
+      --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz 
+      --dir-output ${TMPDIR} 
+      --dir-output-verbose ${TMPDIR} 
+      --iter-max 10
+      --rigid-only 1
+      --factor-downsampling 23.5 
+      --factor-inplane-spacing 1 
+      --verbose 0
+  tags:
+    - gift-adelie 
+
 reconstruct_volume:
   only:
     - master
@@ -106,11 +124,33 @@ reconstruct_volume:
       --regularization TV 
       --alpha 5 
       --rho 0.5 
-      --sigma 0.25 
+      --sigma2 0.25 
       --resolution-processing 1 
       --resolution-reconstruction 2 
       --iterations 5 
       --iter-max 5 
       --verbose 0
+  tags:
+    - gift-adelie
+
+reconstruct_volume_no_ic:
+  only:
+    - master
+  script:
+    - >
+      python vrpf_reconstruct_volume.py 
+      --stack ${DATADIR}/SemiAutomaticExtraction_A5208316-B0702861-5yr.nii.gz  
+      --reference ${DATADIR}/Reference_A5208316-B0702861-20yr-0-PD.nii.gz 
+      --dir-input ${DATADIR}/A5208316-B0702861-5yr_motion_correction/Affine 
+      --dir-output ${TMPDIR} 
+      --regularization TK1 
+      --alpha 0.05 
+      --resolution-processing 1 
+      --resolution-reconstruction 2 
+      --iterations 5 
+      --iter-max 5 
+      --verbose 0
+      --sigma2 -1 
+      --intensity-correction 0
   tags:
     - gift-adelie

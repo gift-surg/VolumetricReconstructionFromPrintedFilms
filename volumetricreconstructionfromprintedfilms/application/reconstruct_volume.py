@@ -15,6 +15,7 @@ import niftymic.reconstruction.admm_solver as admm
 import niftymic.reconstruction.tikhonov_solver as tk
 import niftymic.utilities.brain_stripping as bs
 import niftymic.utilities.intensity_correction as ic
+import niftymic.base.psf as psf
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 import volumetricreconstructionfromprintedfilms.utilities.input_argparser as inargs
@@ -27,9 +28,9 @@ def main():
 
     input_parser = inargs.InputArgparser(
         description="Based on the estimated transformations obtained by "
-                    "'correct_motion.py' a volumetric representation is reconstructed. "
-                    "An additional total variation denoising step is performed for "
-                    "improved visual appearance",
+                    "'correct_motion.py' a volumetric representation is "
+                    "reconstructed. An additional in-plane denoising "
+                    "step is performed for improved visual appearance",
     )
     input_parser.add_stack(required=True)
     input_parser.add_reference(required=True)
@@ -43,10 +44,22 @@ def main():
         default=0.003  # TV
         # default=0.03  # TK1
     )
+    input_parser.add_option(
+        option_string="--intensity-correction",
+        type=int,
+        default=1,
+        help="Turn on/off intensity correction.")
+    input_parser.add_option(
+        option_string="--additional-frame",
+        type=float,
+        default=0,
+        help="Specify extra surrounding frame (in mm) to be added in the "
+        "in-plane dimensions for the reconstructed image. "
+        "The slice-thickness remains unchanged.")
     input_parser.add_rho(default=0.5)
     input_parser.add_iterations(default=10)
     input_parser.add_iter_max(default=10)
-    input_parser.add_sigma(default=0.25)
+    input_parser.add_sigma2(default=0.25)
     input_parser.add_resolution_processing(default=0.25)
     input_parser.add_resolution_reconstruction(default=1.)
     input_parser.add_verbose(default=False)
@@ -83,10 +96,11 @@ def main():
 
     # Get enlarged FOV
     resampling_grid_sitk = sitkh.get_altered_field_of_view_sitk_image(
-        resampling_grid_sitk, unit="mm",
-        boundary_i=5,
-        boundary_j=5,
-        boundary_k=0)
+        resampling_grid_sitk,
+        boundary_i=args.additional_frame,
+        boundary_j=args.additional_frame,
+        boundary_k=0,
+        unit="mm")
 
     recon_grid_sitk = 0 * sitkh.get_downsampled_sitk_image(
         resampling_grid_sitk,
@@ -120,6 +134,25 @@ def main():
                 interpolator="BSpline")
         ])
 
+    # Write results
+    i = len(slice_transforms_sitk) / 2  # select midslice trafo for alignment
+    stack0.update_motion_correction(slice_transforms_sitk[i])
+    stack_naivelyscaled_recon_grid = \
+        stack0.get_resampled_stack_from_slices(
+            resampling_grid=recon_grid_sitk,
+            interpolator="BSpline",
+            default_pixel_value=default_pixel_value)
+    stack_naivelyscaled_recon_grid.write(
+        args.dir_output, filename_stack + "_recon-space")
+
+    stack_motioncorrected_recon_grid = \
+        stack.get_resampled_stack_from_slices(
+            resampling_grid=recon_grid_sitk,
+            interpolator="BSpline",
+            default_pixel_value=default_pixel_value)
+    stack_motioncorrected_recon_grid.write(
+        args.dir_output, filename_stack + "_motion-corrected")
+
     # ---------------------------------------------------------------------
     # Get brain mask for reference image
     ph.print_title("Get brain mask for reference image")
@@ -148,80 +181,65 @@ def main():
 
     ph.print_title("Resample original stack to reconstruction grid")
     stack0_resampled = st.Stack.from_stack(stack0)
-    i = len(slice_transforms_sitk) / 2
-    stack0_resampled.update_motion_correction(slice_transforms_sitk[i])
     stack0_resampled = stack0_resampled.get_resampled_stack_from_slices(
         resampling_grid=recon_grid_sitk,
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
     stack0_resampled.set_filename(filename_stack)
 
-    # Write results
-    stack_naivelyscaled_recon_grid = \
-        stack0_resampled.get_resampled_stack_from_slices(
-            resampling_grid=recon_grid_sitk, interpolator="BSpline")
-    stack_naivelyscaled_recon_grid.write(
-        args.dir_output, filename_stack + "_scaled")
-
-    stack_motioncorrected_recon_grid = \
-        stack_resampled.get_resampled_stack_from_slices(
-            resampling_grid=recon_grid_sitk, interpolator="BSpline")
-    stack_motioncorrected_recon_grid.write(
-        args.dir_output, filename_stack + "_motion-corrected")
-
     # ---------------------------------------------------------------------
-    # Perform intensity correction
-    # sitkh.show_stacks([stack0_resampled, stack_resampled], title=["0","1"])
-    ph.print_title("Perform intensity correction")
-    intensity_correction = ic.IntensityCorrection(
-        stack=stack_resampled,
-        reference=reference_image_resampled,
-        use_reference_mask=True,
-        use_verbose=True)
-    intensity_correction.set_additional_stack(stack0_resampled)
-    intensity_correction.use_individual_slice_correction(False)
-    intensity_correction.run_affine_intensity_correction()
-    # intensity_correction.use_individual_slice_correction(False)
-    intensity_correction.run_lower_percentile_capping_of_stack(percentile=25)
-    # intensity_correction.use_individual_slice_correction(True)
-    intensity_correction.run_linear_intensity_correction()
-    # noinspection PyPep8Naming
-    stack_intensityCorrected = intensity_correction.get_intensity_corrected_stack()
-    stack0_intensityCorrected = \
-        intensity_correction.get_intensity_corrected_additional_stack()
+    if args.intensity_correction:
+        # Perform intensity correction
+        # sitkh.show_stacks([stack0_resampled, stack_resampled], title=["0","1"])
+        ph.print_title("Perform intensity correction")
+        intensity_correction = ic.IntensityCorrection(
+            stack=stack_resampled,
+            reference=reference_image_resampled,
+            use_reference_mask=True,
+            use_verbose=True)
+        intensity_correction.set_additional_stack(stack0_resampled)
+        intensity_correction.use_individual_slice_correction(False)
+        intensity_correction.run_affine_intensity_correction()
+        # intensity_correction.use_individual_slice_correction(False)
+        intensity_correction.run_lower_percentile_capping_of_stack(
+            percentile=25)
+        # intensity_correction.use_individual_slice_correction(True)
+        intensity_correction.run_linear_intensity_correction()
+        # noinspection PyPep8Naming
+        stack_intensityCorrected = intensity_correction.get_intensity_corrected_stack()
+        stack0_intensityCorrected = \
+            intensity_correction.get_intensity_corrected_additional_stack()
 
-    stack_intensityCorrected.set_filename(
-        filename_stack + "_motion-corrected-ic")
-    stack0_intensityCorrected.set_filename(filename_stack + "_scaled-ic")
+        stack_intensityCorrected.set_filename(
+            filename_stack + "_motion-corrected-ic")
+        stack0_intensityCorrected.set_filename(filename_stack + "_recon-space-ic")
+    else:
+        stack_intensityCorrected = stack_resampled
+        stack0_intensityCorrected = stack0_resampled
 
     # Write results
-    stack_naivelyscaledic_recon_grid = stack0_intensityCorrected
-    stack_naivelyscaledic_recon_grid.write(
-        args.dir_output, filename_stack + "_scaled-ic")
+    if args.intensity_correction:
+        stack_naivelyscaledic_recon_grid = stack0_intensityCorrected
+        stack_naivelyscaledic_recon_grid.write(
+            args.dir_output, filename_stack + "_recon-space-ic")
 
-    stack_motioncorrectedic_recon_grid = \
-        stack_intensityCorrected.get_resampled_stack_from_slices(
-            resampling_grid=recon_grid_sitk, interpolator="BSpline")
-    stack_motioncorrectedic_recon_grid.write(
-        args.dir_output, filename_stack + "_motion-corrected-ic")
+        stack_motioncorrectedic_recon_grid = \
+            stack_intensityCorrected.get_resampled_stack_from_slices(
+                resampling_grid=recon_grid_sitk, interpolator="BSpline")
+        stack_motioncorrectedic_recon_grid.write(
+            args.dir_output, filename_stack + "_motion-corrected-ic")
 
     # verbose:
     if args.verbose:
-        # On reconstruction grid:
-        sitkh.show_stacks(
-            [stack_naivelyscaled_recon_grid,
-             stack_motioncorrected_recon_grid,
-             stack_naivelyscaledic_recon_grid,
-             stack_motioncorrectedic_recon_grid,
-             reference_image_resampled],
-            # label=[
-            # "NaivelyScaled",
-            # "MotionCorrected",
-            # "NaivelyScaledIC",
-            # "MotionCorrectedIC",
-            # "Reference"],
-        )
-
+        tmp = [
+            stack_naivelyscaled_recon_grid,
+            stack_motioncorrected_recon_grid,
+        ]
+        if args.intensity_correction:
+            tmp.append(stack_naivelyscaledic_recon_grid)
+            tmp.append(stack_motioncorrectedic_recon_grid)
+        tmp.append(reference_image_resampled)
+        sitkh.show_stacks(tmp)
     # ---------------------------------------------------------------------
     # Extract mask from reference
     ph.print_title("Extract mask from reference")
@@ -229,11 +247,17 @@ def main():
 
     # ---------------------------------------------------------------------
     # Perform SR step
-    ph.print_title("Perform SR step")
+    ph.print_title("Perform In-plane Deconvolution Step")
 
     # Deconvolution only in-plane
-    sigma2 = args.sigma ** 2
-    cov = np.array([sigma2, sigma2, 1e-5])
+    if args.sigma2 < 0:
+        # Estimate PSF automatically given original in-plane resolution
+        cov = psf.PSF().get_gaussian_psf_covariance_matrix_from_spacing(
+            stack0.sitk.GetSpacing())
+        cov[2, 2] = 1e-5
+    else:
+        # Use predefined covariance
+        cov = np.array([args.sigma2, args.sigma2, 1e-5])
 
     if args.regularization != "TV":
         volumetric_recon = tk.TikhonovSolver(
@@ -276,20 +300,16 @@ def main():
         volumetric_recon.get_setting_specific_filename(prefix="recon_"))
 
     if args.verbose:
-        sitkh.show_stacks(
-            [stack_naivelyscaled_recon_grid,
-             stack_motioncorrected_recon_grid,
-             stack_naivelyscaledic_recon_grid,
-             stack_motioncorrectedic_recon_grid,
-             stack_reconstructed,
-             reference_image_resampled],
-            label=["NaivelyScaled",
-                   "MotionCorrected",
-                   "NaivelyScaledIC",
-                   "MotionCorrectedIC",
-                   "Recon",
-                   "Reference"],
-        )
+        tmp = [
+            stack_naivelyscaled_recon_grid,
+            stack_motioncorrected_recon_grid,
+        ]
+        if args.intensity_correction:
+            tmp.append(stack_naivelyscaledic_recon_grid)
+            tmp.append(stack_motioncorrectedic_recon_grid)
+        tmp.append(stack_reconstructed)
+        tmp.append(reference_image_resampled)
+        sitkh.show_stacks(tmp)
 
     # Write results
     stack_reconstructed.write(

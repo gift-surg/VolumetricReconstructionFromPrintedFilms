@@ -154,11 +154,11 @@ class InputArgparser(object):
     def add_factor_downsampling(
         self,
         option_string="--factor-downsampling",
-        type=int,
+        type=float,
         help="Factor which used to downsample the in-plane resolution of the "
         "semi-automatically extracted stack. This will speed-up the "
         "computations but might affect the accuracy.",
-        default=10,
+        default=1,
     ):
         self._add_argument(dict(locals()))
 
@@ -209,11 +209,14 @@ class InputArgparser(object):
     ):
         self._add_argument(dict(locals()))
 
-    def add_sigma(
+    def add_sigma2(
         self,
-        option_string="--sigma",
+        option_string="--sigma2",
         type=float,
-        help="Standard deviation to define blurring operator A ",
+        help="(Squared) standard deviation to define the in-plane blurring "
+        "operator A. "
+        "If it is set to be < 0, it is automatically estimated from "
+        "the original image spacing.",
         default=0.25,
     ):
         self._add_argument(dict(locals()))
@@ -243,6 +246,17 @@ class InputArgparser(object):
         type=int,
         help="Turn on/off verbose output.",
         default=1,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_option(
+        self,
+        option_string="--option",
+        nargs=None,
+        type=float,
+        help="Add option.",
+        default=None,
+        required=False,
     ):
         self._add_argument(dict(locals()))
 

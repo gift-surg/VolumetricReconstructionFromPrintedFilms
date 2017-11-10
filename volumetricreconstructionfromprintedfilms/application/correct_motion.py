@@ -48,8 +48,14 @@ def main():
     input_parser.add_iter_max(default=20)
     input_parser.add_verbose(default=0)
     input_parser.add_dir_output_verbose(required=False)
-    input_parser.add_factor_downsampling(default=10)
+    input_parser.add_factor_downsampling(default=2)
     input_parser.add_factor_inplane_spacing(default=1)
+    input_parser.add_option(
+        option_string="--rigid-only",
+        type=int,
+        default=0,
+        help="Only use in-plane rigid motion correction."
+    )
 
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
@@ -122,18 +128,18 @@ def main():
     # noinspection PyTypeChecker
     default_pixel_value = np.percentile(
         np.array(sitk.GetArrayFromImage(stack.sitk)), 0.1)
-    args.factor_downsampling = int(args.factor_downsampling /
-                                   float(args.factor_inplane_spacing))
+    factor_downsampling = args.factor_downsampling / \
+        float(args.factor_inplane_spacing)
     stack_sitk_downsampled = sitkh.get_downsampled_sitk_image(
         stack_sitk,
-        downsampling_factors=(args.factor_downsampling,
-                              args.factor_downsampling, 1),
+        downsampling_factors=(factor_downsampling,
+                              factor_downsampling, 1),
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
     ph.print_info("Default pixel value for resampling: %.2f"
                   % default_pixel_value)
-    ph.print_info("Downsampling factor (corrected by in-plane spacing): %d"
-                  % args.factor_downsampling)
+    ph.print_info("Downsampling factor (corrected by in-plane spacing): %g"
+                  % factor_downsampling)
 
     # ---------------------------------------------------------------------
     # Skull mask stripping
@@ -149,15 +155,15 @@ def main():
         stack_sitk_downsampled,
         filename_stack + "_downsampled",
         stack_sitk_mask_downsampled)
-    # stack_downsampled.show(1)
 
     # Counter to write the output images in a consecutive sequence
     ctr = [-1]
-    
+
     # Write result
     if args.dir_output_verbose is not None:
 
-        filename_suffix = "_downsampled" + str(args.factor_downsampling)
+        filename_suffix = "_downsampled" + \
+            str(factor_downsampling).replace(".", "p")
         stack_downsampled.set_filename(filename_stack + filename_suffix)
         stack_downsampled.write(
             directory=args.dir_output_verbose,
@@ -167,59 +173,52 @@ def main():
 
     # ---------------------------------------------------------------------
     # Self in-plane rigid registration
-    ph.print_title("Self in-plane rigid registration")
-    inplane_registration = intrareg.IntraStackRegistration(
-        stack=stack_downsampled,
-        transform_initializer_type="moments",
-        # use_stack_mask=True,
-        optimizer_iter_max=args.iter_max,
-        optimizer_loss="linear",
-        use_verbose=True,
-    )
-    inplane_registration.run()
-    inplane_registration.print_statistics()
-    stack_selfRigidInplane = inplane_registration.get_corrected_stack()
-
-    # Get slice transforms
-    slice_transforms_sitk_update = \
-        inplane_registration.get_slice_transforms_sitk()
-    slice_transforms_sitk = utils.get_updated_affine_transforms(
-        slice_transforms_sitk_update, slice_transforms_sitk)
-
-    # Debug
-    # foo = st.Stack.from_stack(stack0)
-    # foo.update_motion_correction_of_slices(slice_transforms_sitk)
-    # sitkh.show_sitk_image(
-    #     [foo.get_resampled_stack_from_slices(
-    #         resampling_grid=stack_selfRigidInplane.sitk,
-    #         interpolator="BSpline").sitk,
-    #      stack_selfRigidInplane.get_resampled_stack_from_slices(
-    #         resampling_grid=stack_selfRigidInplane.sitk,
-    #         interpolator="BSpline").sitk
-    #      ])
-
-    # Write result
-    if args.dir_output_verbose is not None:
-        filename_suffix = "_selfinplane"
-        stack_selfRigidInplane.set_filename(filename_stack + filename_suffix)
-        tmp = stack_selfRigidInplane.get_resampled_stack_from_slices(
-            interpolator="BSpline", default_pixel_value=default_pixel_value)
-        tmp.write(
-            directory=args.dir_output_verbose,
-            filename=filename_stack + "_" +
-            str(ph.add_one(ctr)) + filename_suffix,
-            write_mask=False)
-
-    if args.verbose:
-        sitkh.show_stacks(
-            [stack_downsampled,
-             stack_selfRigidInplane.get_resampled_stack_from_slices(
-                 resampling_grid=stack_downsampled.sitk,
-                 interpolator="BSpline",
-                 default_pixel_value=default_pixel_value),
-             ],
-            segmentation=stack_downsampled
+    if not args.rigid_only:
+        ph.print_title("Self in-plane rigid registration")
+        inplane_registration = intrareg.IntraStackRegistration(
+            stack=stack_downsampled,
+            transform_initializer_type="moments",
+            # use_stack_mask=True,
+            optimizer_iter_max=args.iter_max,
+            optimizer_loss="linear",
+            use_verbose=True,
         )
+        inplane_registration.run()
+        inplane_registration.print_statistics()
+        stack_selfRigidInplane = inplane_registration.get_corrected_stack()
+
+        # Get slice transforms
+        slice_transforms_sitk_update = \
+            inplane_registration.get_slice_transforms_sitk()
+        slice_transforms_sitk = utils.get_updated_affine_transforms(
+            slice_transforms_sitk_update, slice_transforms_sitk)
+
+        # Write result
+        if args.dir_output_verbose is not None:
+            filename_suffix = "_selfinplane"
+            stack_selfRigidInplane.set_filename(
+                filename_stack + filename_suffix)
+            tmp = stack_selfRigidInplane.get_resampled_stack_from_slices(
+                interpolator="BSpline", default_pixel_value=default_pixel_value)
+            tmp.write(
+                directory=args.dir_output_verbose,
+                filename=filename_stack + "_" +
+                str(ph.add_one(ctr)) + filename_suffix,
+                write_mask=False)
+
+        if args.verbose:
+            sitkh.show_stacks(
+                [stack_downsampled,
+                 stack_selfRigidInplane.get_resampled_stack_from_slices(
+                     resampling_grid=stack_downsampled.sitk,
+                     interpolator="BSpline",
+                     default_pixel_value=default_pixel_value),
+                 ],
+                segmentation=stack_downsampled
+            )
+
+    else:
+        stack_selfRigidInplane = stack_downsampled
 
     # ---------------------------------------------------------------------
     # Skull mask stripping
@@ -228,17 +227,6 @@ def main():
     tmp_fixed = stack_selfRigidInplane.get_resampled_stack_from_slices(
         interpolator="BSpline",
         default_pixel_value=default_pixel_value)
-
-    # brain_stripping = bs.BrainStripping(
-    #     compute_brain_mask=True, compute_skull_image=True)
-    # brain_stripping.set_input_image_sitk(tmp_fixed.sitk)
-    # brain_stripping.run()
-    # tmp_fixed_mask_sitk = brain_stripping.get_mask_around_skull(
-    #     dilate_radius=0, erode_radius=0)
-    # tmp_fixed = st.Stack.from_sitk_image(
-    #     tmp_fixed.sitk,
-    #     tmp_fixed.get_filename(),
-    #     tmp_fixed_mask_sitk)
 
     # ---------------------------------------------------------------------
     # Rigid registration to reference
@@ -254,17 +242,6 @@ def main():
         # use_fixed_mask=True,
         # use_moving_mask=True,
     )
-    # registration_method = regsitk.SimpleItkRegistration(
-    #     fixed=tmp_fixed,
-    #     moving=reference_image,
-    #     interpolator="NearestNeighbor",
-    #     initializer_type="MOMENTS",
-    #     metric="Correlation",
-    #     scales_estimator="PhysicalShift",
-    #     use_fixed_mask=True,
-    #     # use_moving_mask=True,
-    #     use_verbose=True,
-    # )
     registration_method.run()
     stack_rigidToReference = registration_method.get_transformed_fixed()
 
@@ -288,7 +265,6 @@ def main():
             # write_mask=True,
         )
 
-    # Debug
     if args.verbose:
         sitkh.show_stacks(
             [stack_rigidToReference.get_resampled_stack_from_slices(
@@ -296,6 +272,87 @@ def main():
                 interpolator="BSpline",
                 default_pixel_value=default_pixel_value),
              reference_image])
+
+    if args.rigid_only:
+        # ---------------------------------------------------------------------
+        # Inplane 2D rigid registration to reference
+        ph.print_title("Inplane 2D rigid registration to reference")
+        inplane_registration = intrareg.IntraStackRegistration(
+            stack=stack_rigidToReference,
+            reference=reference_image.get_resampled_stack(
+                resampling_grid=stack_rigidToReference.sitk,
+                interpolator="BSpline"))
+        inplane_registration.use_verbose(True)
+        inplane_registration.use_stack_mask_reference_fit_term(True)
+        inplane_registration.use_stack_mask_neighbour_fit_term(True)
+        inplane_registration.use_reference_mask(True)
+        inplane_registration.set_transform_type("rigid")
+        # inplane_registration.set_image_transform_reference_fit_term("gradient_magnitude")
+        # inplane_registration.set_image_transform_reference_fit_term("partial_derivative")
+        inplane_registration.set_intensity_correction_initializer_type(None)
+        inplane_registration.set_intensity_correction_type_reference_fit(
+            "affine")
+        inplane_registration.set_intensity_correction_type_slice_neighbour_fit(
+            "affine")
+        inplane_registration.set_optimizer_iter_max(args.iter_max)
+        inplane_registration.set_alpha_reference(10)
+        inplane_registration.set_alpha_neighbour(1)
+        inplane_registration.set_alpha_parameter(1e6)
+        inplane_registration.set_optimizer_loss("soft_l1")
+        inplane_registration.set_transform_initializer_type("identity")
+        inplane_registration.run()
+        inplane_registration.print_statistics()
+        stack_RigidInplane = inplane_registration.get_corrected_stack()
+
+        filename_suffix = "_inplane2Drigid"
+        stack_RigidInplane.set_filename(filename_stack + filename_suffix)
+
+        # Get slice transforms
+        slice_transforms_sitk_update = \
+            inplane_registration.get_slice_transforms_sitk()
+        slice_transforms_sitk = utils.get_updated_affine_transforms(
+            slice_transforms_sitk_update, slice_transforms_sitk)
+
+        # Write result
+        if args.dir_output_verbose is not None:
+            tmp = stack_RigidInplane.get_resampled_stack_from_slices(
+                interpolator="BSpline")
+            tmp.write(
+                directory=args.dir_output_verbose,
+                filename=filename_stack + "_" +
+                str(ph.add_one(ctr)) + filename_suffix,
+                write_mask=False)
+
+        if args.verbose:
+            sitkh.show_stacks([
+                stack_rigidToReference.get_resampled_stack_from_slices(
+                    resampling_grid=stack_rigidToReference.sitk,
+                    interpolator="BSpline",
+                    default_pixel_value=default_pixel_value),
+                stack_RigidInplane.get_resampled_stack_from_slices(
+                    resampling_grid=stack_rigidToReference.sitk,
+                    interpolator="BSpline",
+                    default_pixel_value=default_pixel_value),
+                reference_image,
+            ]
+            )
+
+        # ---------------------------------------------------------------------
+        # Write results: In-plane 2D Similar
+        stack_final = stack_RigidInplane
+        utils.write_results_motion_correction(
+            os.path.join(args.dir_output, "Rigid"),
+            filename_stack,
+            stack0,
+            stack_final,
+            slice_transforms_sitk,
+            reference_image)
+
+        elapsed_time = ph.stop_timing(time_start)
+        ph.print_title("Summary Motion Correction")
+        ph.print_info("Computational time: %s" % elapsed_time)
+
+        return 0
 
     # ---------------------------------------------------------------------
     # Inplane 3D similarity registration to reference
@@ -345,7 +402,6 @@ def main():
             str(ph.add_one(ctr)) + filename_suffix,
             write_mask=False)
 
-    # Debug
     if args.verbose:
         sitkh.show_stacks([
             stack_inplane3DSimilar.get_resampled_stack_from_slices(
