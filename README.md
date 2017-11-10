@@ -1,6 +1,6 @@
 # Volumetric Reconstruction from Printed Films
 
-This is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2017][citation].
+This is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project to reconstruct a volumetric representation from printed brain MR films as described in [Ebner et al., 2018][citation].
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl]. Please note that currently **only Python 2** is supported.
 
@@ -20,9 +20,9 @@ A final isotropic total variation in-plane deconvolution technique serves to rev
 
 
 ## How to cite
-If you use this software in your work, please cite [Ebner et al., 2017][citation].
+If you use this software in your work, please cite [Ebner et al., 2018][citation].
 
-* Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., and Ourselin, S. (In press). Volumetric Reconstruction from Printed Films: Enabling 30 Year Longitudinal Analysis in MR Neuroimaging. NeuroImage.
+* Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., & Ourselin, S. (2018). Volumetric reconstruction from printed films: Enabling 30 year longitudinal analysis in MR neuroimaging. NeuroImage, 165, 238–250.
 
 ## Installation
 
@@ -85,8 +85,8 @@ vrpf_correct_motion \
 ```
 
 Estimated transform parameters for both in-plane similarity and affine transforms are written to the output directory for each single slice in separate folders called `Similarity` and `Affine`, respectively. The obtained motion correction results are
-used as input for 'vrpf_reconstruct_volume.py' which provides a volumetric
-reconstructions in a subsequent step.
+used as input for `vrpf_reconstruct_volume.py` which provides a volumetric
+reconstruction in a subsequent step.
 
 ---
 
