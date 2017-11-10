@@ -54,7 +54,9 @@ def main():
         option_string="--rigid-only",
         type=int,
         default=0,
-        help="Only use in-plane rigid motion correction."
+        help="Turn on/off the use of in-plane rigid motion correction only. "
+        "Intensity correction is not performed then. Slice motion correction "
+        "transforms are written to folder 'Rigid' in the output folder."
     )
 
     args = input_parser.parse_args()
