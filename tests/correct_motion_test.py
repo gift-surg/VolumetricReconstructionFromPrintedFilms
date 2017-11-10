@@ -34,6 +34,7 @@ class CorrectMotionTest(unittest.TestCase):
         cmd_args.append("--stack %s" % path_to_stack)
         cmd_args.append("--reference %s" % path_to_reference)
         cmd_args.append("--dir-output %s" % dir_output)
+        cmd_args.append("--dir-output-verbose %s" % dir_output)
         cmd_args.append("--factor-downsampling %s" % factor_downsampling)
         cmd_args.append("--iter-max %s" % iter_max)
 
