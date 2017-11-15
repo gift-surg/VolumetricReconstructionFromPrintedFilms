@@ -1,10 +1,6 @@
 ###
 # \file setup.py
 #
-# Install with symlink: 'pip install -e .'
-# Changes to the source file will be immediately available to other users
-# of the package
-#
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       September 2017
 #
@@ -12,10 +8,13 @@
 
 from setuptools import setup
 
-long_description = ""
+long_description = "A flexible framework to reconstruct the volumetric "
+"representation from printed films. Is is based on semi-automatic slice "
+"extraction, followed by automated slice-to-volume registration with "
+"inter-slice transformation regularisation and slice intensity correction. "
 
 setup(name='VolumetricReconstructionFromPrintedFilms',
-      version='0.1rc1',
+      version='0.1',
       description='Volumetric Reconstruction from Printed Films: '
       'Enabling 30 Year Longitudinal Analysis in MR Neuroimaging',
       long_description=long_description,
