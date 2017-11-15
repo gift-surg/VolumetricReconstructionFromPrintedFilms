@@ -15,7 +15,7 @@ from setuptools import setup
 long_description = ""
 
 setup(name='VolumetricReconstructionFromPrintedFilms',
-      version='0.1.dev1',
+      version='0.1rc1',
       description='Volumetric Reconstruction from Printed Films: '
       'Enabling 30 Year Longitudinal Analysis in MR Neuroimaging',
       long_description=long_description,
@@ -25,11 +25,11 @@ setup(name='VolumetricReconstructionFromPrintedFilms',
       license='BSD-3-Clause',
       packages=['volumetricreconstructionfromprintedfilms'],
       install_requires=[
-          'pysitk',
-          'nsol',
-          'simplereg',
-          'niftymic',
-          'matplotlib>=1.4.3',
+          'pysitk==0.1',
+          'nsol==0.1',
+          'simplereg==0.1',
+          'niftymic==0.1',
+          'matplotlib==1.4.3',
           'natsort==5.0.3',
           'numpy==1.13.1',
           'SimpleITK==1.0.1',
@@ -39,12 +39,14 @@ setup(name='VolumetricReconstructionFromPrintedFilms',
       "regularizedimageregistration totalvariationreconstruction "
       "longitudinal analysis",
       classifiers=[
-          'Development Status :: 3 - Alpha',
-
           'Intended Audience :: Developers',
-          'Topic :: Software Development :: Build Tools',
+          'Intended Audience :: Healthcare Industry',
+          'Intended Audience :: Science/Research',
 
           'License :: OSI Approved :: BSD License',
+
+          'Topic :: Software Development :: Build Tools',
+          'Topic :: Scientific/Engineering :: Medical Science Apps.',
 
           'Programming Language :: Python',
           'Programming Language :: Python :: 2',
