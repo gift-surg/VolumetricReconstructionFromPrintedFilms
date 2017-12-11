@@ -41,8 +41,8 @@ def main():
              "reconstruction results")
     input_parser.add_regularization(default="TV")
     input_parser.add_alpha(
-        default=0.003  # TV
-        # default=0.03  # TK1
+        default=5  # TV
+        # default=0.3  # TK1
     )
     input_parser.add_option(
         option_string="--intensity-correction",
@@ -269,6 +269,7 @@ def main():
             iter_max=args.iter_max,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
+            x_scale=1,
         )
 
     else:
@@ -280,6 +281,7 @@ def main():
             iter_max=5,
             deconvolution_mode="predefined_covariance",
             predefined_covariance=cov,
+            x_scale=1,
         )
         volumetric_recon.run()
         HR_volume0 = volumetric_recon.get_reconstruction()
@@ -293,6 +295,7 @@ def main():
             predefined_covariance=cov,
             rho=args.rho,
             iterations=args.iterations,
+            x_scale=1,
         )
 
     volumetric_recon.run()
