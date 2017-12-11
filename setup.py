@@ -14,7 +14,7 @@ long_description = "A flexible framework to reconstruct the volumetric "
 "inter-slice transformation regularisation and slice intensity correction. "
 
 setup(name='VolumetricReconstructionFromPrintedFilms',
-      version='0.1',
+      version='0.2rc1',
       description='Volumetric Reconstruction from Printed Films: '
       'Enabling 30 Year Longitudinal Analysis in MR Neuroimaging',
       long_description=long_description,
